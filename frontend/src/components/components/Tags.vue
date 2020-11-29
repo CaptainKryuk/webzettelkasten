@@ -4,7 +4,7 @@
 
   <div class="tags">
     <div class="tag" v-for="(tag, index) in tags_ideas" :key="index">
-      <p class="tag__name"># {{ tag.name }}</p>
+      <p class="tag__name" :style="`border-bottom: 2px solid ${tag.color};`"># {{ tag.name }}</p>
 
       <div class="tag__ideas">
         <div class="idea" v-for="(idea, index) in tag.ideas" :key="idea.id" @click="routeLink(`/minds/${idea.id}`)">

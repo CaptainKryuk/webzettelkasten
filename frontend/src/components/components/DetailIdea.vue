@@ -11,8 +11,6 @@
   </div>
 
   <router-link to="update">Изменить</router-link>
-
-
 </template>
 
 <script>
@@ -35,11 +33,16 @@ export default {
     
     markdown_text: function() {
       return marked(this.idea.text);
+    },
+
+    code_selectors() {
+
     }
   },
 
   mounted() {
     this.getIdea()
+    this.changeSelectors()
   },
 
   methods: {
@@ -50,6 +53,42 @@ export default {
           this.idea = response.data
           this.loading = false
         })
+    },
+
+    changeSelectors() {
+      return setTimeout(() => {
+        // style dict
+        let img_dict = {
+          'language-js': '/static/img/js.svg',
+          'language-css': '/static/img/css.svg',
+          'language-python': '/static/img/python.svg',
+          'language-html': '/static/img/html.svg',
+          'language-vuejs': '/static/img/vuejs.svg',
+        }
+
+        // get all <code></code>
+        let code_elements = document.querySelectorAll('code')
+        code_elements.forEach((code) => {
+
+          // get parent
+          let code_parent = code.parentElement
+          
+          // create new img
+          let new_element = document.createElement('img')
+
+          code_parent.style.margin = '0 0 40px 0'
+
+          new_element.src = img_dict[code.classList]
+          new_element.style.display = 'block'
+          new_element.style.width = '30px'
+          new_element.style.height = '30px'
+          new_element.style.margin = '20px 0 10px 0'
+          new_element.style.position = 'relative'
+          new_element.style.left = '-5px'
+
+          code_parent.insertBefore(new_element, code)
+        })
+      }, 500)
     }
   }
 }

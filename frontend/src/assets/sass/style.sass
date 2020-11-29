@@ -60,6 +60,7 @@
           top: 10px
           width: 15px
           height: 15px
+          cursor: pointer
 
         p
           margin-bottom: 10px
@@ -101,13 +102,13 @@
           font-size: 14px
           color: $description
           display: -webkit-box
-          -webkit-line-clamp: 7
+          -webkit-line-clamp: 4
           -webkit-box-orient: vertical
           overflow: hidden
           margin-bottom: 15px
 
         .tags
-          margin-bottom: 15px
+          margin-bottom: 10px
           
           ul
             display: flex
@@ -115,7 +116,7 @@
 
             li
               color: $text
-              padding: 10px 15px
+              padding: 6px 15px
               font-size: 14px
               border-radius: 3px
               margin: 0 10px 10px 0
@@ -125,6 +126,11 @@
           justify-content: space-between
           align-items: center
           margin-bottom: 15px
+
+          img
+            width: 20px
+            height: 20px
+            cursor: pointer
 
           button
             background: none
@@ -144,6 +150,8 @@
         font-size: 24px
         font-weight: bold
         margin-bottom: 15px
+        display: inline-block
+
       
 
       &__ideas
@@ -170,9 +178,9 @@
             left: 0
             background-image: url('/static/img/vector.svg')
             background-repeat: no-repeat
-
-
+      
   .detail_idea
+    // margin-bottom: 40px
     .idea_title
       margin-bottom: 5px
 
@@ -183,6 +191,20 @@
 
     .text
       margin-bottom: 30px
+
+
+    .language-js
+      color: red
+    
+    .language-js::before
+      content: url('/static/img/js.svg')
+      background-image: url('/static/img/js.svg')
+      width: 20px
+      height: 20px
+      background-repeat: no-repeat
+      top: 0
+      left: 0
+
 
 
 // ======== GENERAL STYLES
@@ -256,6 +278,7 @@
         margin-left: 15px
         width: 20px
         height: 20px
+        cursor: pointer
 
     .tag_list__object:nth-child(1n)
       background: #AFA1CF
@@ -298,6 +321,7 @@
         .text
           img
             margin-left: 10px
+            cursor: pointer
 
         .type
           display: flex
@@ -397,6 +421,7 @@
     .buttons
       display: flex
       justify-content: flex-end
+
       button
         padding: 10px 15px
         border-radius: 3px

@@ -15,7 +15,7 @@
 
     <div class="ideas__completed">
       <div class="ideas__completed__detail" v-for="(idea, index) in completed_ideas" :key="index">
-        <p class="title">{{ idea.title }}</p>
+        <p class="title" @click="routeLink(`/minds/${idea.id}/`)">{{ idea.title }}</p>
         <p class="base_name">{{ idea.base_name }}</p>
         <p class="text">{{ idea.text }}</p>
         <div class="tags">
@@ -26,8 +26,8 @@
           </ul>
         </div>
         <div class="buttons">
-          <button class="show" @click="routeLink(`/minds/${idea.id}/`)">Смотреть</button>
-          <button class="delete" @click="openModal(index + draft_ideas.length)">Удалить</button>
+          <img src="@/assets/img/edit.svg" @click="routeLink(`/minds/${idea.id}/`)" />
+          <img src="@/assets/img/delete.svg" @click="openModal(index + draft_ideas.length)" />
         </div>
       </div>
     </div>

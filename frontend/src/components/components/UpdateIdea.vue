@@ -61,6 +61,7 @@ export default {
   methods: {
     ...mapActions(['deleteIdea']),
 
+
     getIdea() {
       this.loading = true
       axios.get(`${this.server}idea/${this.$route.params.id}/`)

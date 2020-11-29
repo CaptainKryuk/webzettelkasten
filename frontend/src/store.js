@@ -9,7 +9,6 @@ export default createStore({
     }
   },
 
-
   actions: {
     deleteIdea({ commit, state }, id) {
       return new Promise((resolve, reject) => {

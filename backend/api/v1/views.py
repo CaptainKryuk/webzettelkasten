@@ -18,7 +18,8 @@ class IdeaViewSet(viewsets.ViewSet):
     def get_tags_ideas(self, request):
         tags = Tag.objects.all()
         ideas = [{
-                  'name': tag.name, 
+                  'name': tag.name,
+                  'color': tag.color,  
                   'ideas': serializers.IdeaSerializer(tag.idea_set.all(), many=True).data
                 } for tag in tags if len(tag.idea_set.all())]
         return Response(ideas)
