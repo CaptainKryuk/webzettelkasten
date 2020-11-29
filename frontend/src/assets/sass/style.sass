@@ -1,0 +1,413 @@
+@import "./mixins.sass"
+
+.menu
+  padding: 20px $padding
+  display: flex
+  justify-content: space-between
+
+  .logo
+    font-size: 26px
+    font-weight: 900
+
+  .desktop__menu__list
+    display: none
+
+  .drop_menu
+    z-index: 10
+    &__wrapper
+      width: 80%
+      height: 100vh
+      position: fixed
+      box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.25)
+      top: 0
+      right: 0
+      background: white
+      transition: 0.5s
+
+      .menu__list
+        padding: 40px 15px 0
+
+        li
+          margin-bottom: 20px
+          font-weight: bold
+
+.content
+
+  h2 
+    font-size: 30px
+    margin-bottom: 40px
+
+  padding: 0 $padding 30px
+
+  .ideas
+    padding-bottom: 30px
+
+    &__draft
+      &__detail
+        margin-bottom: 20px
+        border: 1px solid #d8d8d8
+        background: #F8FFF8
+        box-shadow: -2px 4px 4px rgba(0, 0, 0, 0.25)
+        border-radius: 5px
+        padding: 10px 15px 0px
+        width: minmax(100%, 768px)
+        max-width: 768px
+        position: relative
+
+        img
+          position: absolute
+          right: 15px
+          top: 10px
+          width: 15px
+          height: 15px
+
+        p
+          margin-bottom: 10px
+
+        .title, .date
+          color: $description
+
+        .name
+          font-weight: bold
+          font-size: 20px
+
+        .absent
+          font-size: 16px
+          color: $hint
+        
+      &__detail:hover
+
+    &__completed
+      margin: 50px 0 0
+      display: grid
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))
+
+      &__detail
+        margin-bottom: 20px
+        margin-right: 30px
+        border-bottom: 1px solid $line        
+
+        .title
+          font-size: 24px
+          font-weight: bold
+        
+        .base_name
+          color: $hint
+          font-size: 12px
+          @include limited-text
+          margin-bottom: 15px
+
+        .text
+          font-size: 14px
+          color: $description
+          display: -webkit-box
+          -webkit-line-clamp: 7
+          -webkit-box-orient: vertical
+          overflow: hidden
+          margin-bottom: 15px
+
+        .tags
+          margin-bottom: 15px
+          
+          ul
+            display: flex
+            flex-wrap: wrap
+
+            li
+              color: $text
+              padding: 10px 15px
+              font-size: 14px
+              border-radius: 3px
+              margin: 0 10px 10px 0
+
+        .buttons
+          display: flex
+          justify-content: space-between
+          align-items: center
+          margin-bottom: 15px
+
+          button
+            background: none
+            border: none
+            font-weight: bold
+          
+          .show
+            text-decoration: underline $description
+
+          .delete
+            color: $accent
+
+  .tags
+    .tag
+      margin-bottom: 50px
+      &__name
+        font-size: 24px
+        font-weight: bold
+        margin-bottom: 15px
+      
+
+      &__ideas
+        margin-bottom: 15px
+
+        .idea
+          margin-bottom: 15px
+        
+          &__name
+            font-weight: bold
+            padding-left: 30px
+            position: relative
+
+            .base_name
+              font-size: 14px
+              color: $hint
+              margin-left: 20px
+      
+          &__name::before
+            content: url('/static/img/vector.svg')
+            width: 35px
+            height: 35px
+            position: absolute
+            left: 0
+            background-image: url('/static/img/vector.svg')
+            background-repeat: no-repeat
+
+
+  .detail_idea
+    .idea_title
+      margin-bottom: 5px
+
+    .base_name
+      font-size: 14px
+      color: $description
+      margin-bottom: 30px
+
+    .text
+      margin-bottom: 30px
+
+
+// ======== GENERAL STYLES
+
+// inputs
+.input
+  padding-right: 15px
+  margin-bottom: 25px
+  &__name
+    font-size: 14px
+    margin-bottom: 5px
+    color: $text
+
+  .hint
+    font-size: 14px
+    color: $hint
+
+  .error
+    color: red
+    font-size: 14px
+    margin-bottom: 10px
+
+  .inside_input
+    border: none
+    background: none
+    outline: none
+    color: $text
+    width: 100%
+    font-size: 16px
+
+  .inside_input::placeholder
+    font-size: 14px
+
+  // textinput
+  &__textinput, &__textarea
+    padding: 8px 20px 8px 10px
+    background: white
+    border: 1px solid $line
+    border-radius: 5px
+    display: flex
+    margin-bottom: 5px
+
+  &__textarea
+    height: 400px
+
+    .inside_input
+      font-size: 14px
+
+
+  &__taginput
+    position: relative
+
+    .tag_list
+      display: flex
+      align-items: center
+      flex-wrap: wrap
+
+      .inside_input
+        width: auto
+
+    .tag_list__object
+      padding: 7px 15px
+      border-radius: 3px
+      color: white
+      display: flex
+      margin-right: 15px
+      margin-bottom: 10px
+      cursor: pointer
+
+      img
+        margin-left: 15px
+        width: 20px
+        height: 20px
+
+    .tag_list__object:nth-child(1n)
+      background: #AFA1CF
+    
+    .tag_list__object:nth-child(2n)
+      background: #DC9D76
+
+    .tag_list__object:nth-child(3n)
+      background: #71B8A9
+
+    .tag_list__object:nth-child(4n)
+      background: #C1C672
+
+
+    .form_input
+      padding: 8px 20px 8px 10px
+      background: white
+      border: 1px solid $line
+      border-radius: 5px
+      display: flex
+      align-items: center
+
+    .fold_board
+      position: absolute
+      padding: 15px 20px 0
+      border-radius: 0px 0px 5px 5px
+      background: 
+      border: 1px solid $line
+      background: white
+      box-shadow: 0px 4px 12px rgba(73, 73, 73, 0.25);
+
+      &__bottom
+        display: flex
+        border-top: 1px solid $line
+        justify-content: space-between
+        align-items: center
+        padding: 20px 0
+        margin-top: 20px
+
+        .text
+          img
+            margin-left: 10px
+
+        .type
+          display: flex
+          align-items: center
+
+        .tag_list__object
+          color: white
+          margin-left: 5px
+          margin-bottom: 0
+          background: lightblue
+
+
+// buttons
+.button
+  padding: 15px 20px
+  background: $accent
+  border: none
+  border-radius: 30px
+  color: white
+  
+
+// spinner
+@mixin spinner
+  width: 20px
+  height: 20px
+  border: 2px solid rgb(236, 236, 236)
+  border-bottom-color: rgb(170, 71, 71)
+  border-radius: 100%
+  animation: spin 1200ms infinite linear
+  margin-left: 15px
+
+@keyframes spin
+  100%
+   transform: rotate(360deg)
+
+.spinner
+  @include spinner
+  border: 2px solid $accent
+  border-bottom-color: lightgray
+
+.large
+  width: 50px
+  height: 50px
+
+.medium
+  width: 35px
+  height: 35px
+
+.small
+  width: 20px
+  height: 20px
+
+
+// modal
+.modal
+  position: fixed
+  width: 100%
+  height: 100vh
+  top: 0
+  left: 0
+  display: flex
+  align-items: center
+  justify-content: center
+  z-index: 30
+
+  .shadow
+    width: 100%
+    height: 100%
+    background: rgba(0, 0, 0, 0.42)
+    position: fixed
+
+  &__window
+    width: 80%
+    height: 250px
+    background: white
+    border-radius: 5px
+    position: relative
+    text-align: left
+    padding: 15px 20px 0
+
+    h1
+      font-size: 26px
+
+
+    .close_icon
+      position: absolute
+      top: 15px
+      right: 15px
+      width: 20px
+      height: 20px
+
+    .description
+      color: $description
+      margin: 70px 0
+      text-align: center
+
+    .buttons
+      display: flex
+      justify-content: flex-end
+      button
+        padding: 10px 15px
+        border-radius: 3px
+        color: $text
+        border: none
+        background: none
+        font-size: 16px
+
+// ===== ANIMATION =====
+
+.menu-slide-enter-from,
+.menu-slide-leave-to
+  transform: translateX(100%)
+  opacity: 0
