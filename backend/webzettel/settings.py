@@ -30,14 +30,7 @@ SECRET_KEY = env('SECRET_URL', default='1488')
 DEBUG = env.bool('DJANGO_DEBUG', default=False) 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '^2c1kg11nn$z0%s4h=1_=%onuv!=7to&rkg2548wa2pmxa^6@^'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1', '213.108.252.208']
 
 
 # Application definition
