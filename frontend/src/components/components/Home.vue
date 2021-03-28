@@ -7,15 +7,15 @@
       <div class="ideas__draft__detail" v-for="(idea, index) in draft_ideas" :key="index">
         <p class="title">Черновик</p>
         <img src="@/assets/img/close.svg" @click="openModal(index)" />
-        <p class="name" @click="routeLink(`/minds/${idea.id}/update`)" v-if="idea.title.length">{{ idea.title }}</p>
-        <p class="name absent" v-if="!idea.title.length" @click="routeLink(`/minds/${idea.id}/update`)">Заголовок отсутствует</p>
+        <p class="name" @click="routeTo(`/minds/${idea.id}/update`)" v-if="idea.title.length">{{ idea.title }}</p>
+        <p class="name absent" v-if="!idea.title.length" @click="routeTo(`/minds/${idea.id}/update`)">Заголовок отсутствует</p>
         <p class="date">{{ idea.created.split("T")[0] }}</p>
       </div>
     </div>
 
     <div class="ideas__completed">
       <div class="ideas__completed__detail" v-for="(idea, index) in completed_ideas" :key="index">
-        <p class="title" @click="routeLink(`/minds/${idea.id}/`)">{{ idea.title }}</p>
+        <p class="title" @click="routeTo(`/minds/${idea.id}/`)">{{ idea.title }}</p>
         <p class="base_name">{{ idea.base_name }}</p>
         <p class="text">{{ idea.text }}</p>
         <div class="tags">
@@ -26,7 +26,7 @@
           </ul>
         </div>
         <div class="buttons">
-          <img src="@/assets/img/edit.svg" @click="routeLink(`/minds/${idea.id}/`)" />
+          <img src="@/assets/img/edit.svg" @click="routeTo(`/minds/${idea.id}/`)" />
           <img src="@/assets/img/delete.svg" @click="openModal(index + draft_ideas.length)" />
         </div>
       </div>
@@ -75,7 +75,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['routeLink']),
+    ...mapMutations(['routeTo']),
 
     deleteIdea() {
       this.$store.dispatch('deleteIdea', this.ideas[this.idea_index].id)

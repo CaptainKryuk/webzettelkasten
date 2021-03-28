@@ -6,10 +6,10 @@ import router from './router'
 // axios initialization
 import service from './axios'
 
-const app = createApp(App)
+const app = createApp(App).use(store).use(router)
 
 // register global all utils in utils folder
-import inputs from './components/global/index'
+import inputs from './global/index'
 
 let components = [...inputs]
 components.forEach(component => {
@@ -43,4 +43,4 @@ app.directive('click-outside', {
 })
 
 
-app.use(store).use(router).mount('#app');
+app.mount('#app');

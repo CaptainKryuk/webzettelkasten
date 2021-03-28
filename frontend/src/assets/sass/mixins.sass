@@ -5,3 +5,176 @@
   white-space: nowrap
   text-overflow: ellipsis
   overflow: hidden
+
+
+@mixin centerY
+  display: flex
+  align-items: center
+
+@mixin centerXY
+  display: flex
+  align-items: center
+  justify-content: center
+
+// buttons
+@mixin basic_button
+  padding: 10px 15px
+  border-radius: 3px
+  border: 2px solid $text
+  font-weight: bold
+  background: none
+  outline: none
+  transition: 0.3s
+  cursor: pointer
+
+
+.appear-enter-from,
+.appear-leave-to
+    opacity: 0  
+
+.appear-enter-active,
+.appear-leave-active
+  transition: opacity 0.5s ease
+
+
+.floating-enter-from,
+.floating-leave-to
+  transform: translateX(0)
+
+.floating-enter-active,
+.floating-leave-active
+  transform: translateX(-100%)
+
+
+.icon
+  @include centerXY
+  margin-right: 10px
+
+  img
+    width: 100%
+
+// inputs
+.input
+  padding-right: 15px
+  margin-bottom: 25px
+  &__name
+    font-size: 14px
+    margin-bottom: 5px
+    color: $description
+    font-weight: bold
+
+  .hint
+    font-size: 14px
+    color: $hint
+
+  .error
+    color: red
+    font-size: 14px
+    margin-bottom: 10px
+
+  .inside_input
+    border: none
+    background: none
+    outline: none
+    color: $text
+    width: 100%
+    font-size: 16px
+    padding: 12px 10px 12px 15px
+
+  .inside_input::placeholder
+    font-size: 14px
+
+  // textinput
+  &__textinput, &__textarea
+    padding: 0 15px 0 0
+    background: white
+    border: 1px solid $line
+    border-radius: 5px
+    display: flex
+    margin-bottom: 5px
+
+  &__textarea
+    height: 400px
+
+    .inside_input
+      font-size: 14px
+
+
+  &__taginput
+    position: relative
+
+    .tag_list
+      display: flex
+      align-items: center
+      flex-wrap: wrap
+
+      .inside_input
+        width: auto
+
+    .tag_list__object
+      padding: 7px 15px
+      border-radius: 3px
+      color: white
+      display: flex
+      margin-right: 15px
+      margin-bottom: 10px
+      cursor: pointer
+
+      img
+        margin-left: 15px
+        width: 20px
+        height: 20px
+        cursor: pointer
+
+    .tag_list__object:nth-child(1n)
+      background: #AFA1CF
+    
+    .tag_list__object:nth-child(2n)
+      background: #DC9D76
+
+    .tag_list__object:nth-child(3n)
+      background: #71B8A9
+
+    .tag_list__object:nth-child(4n)
+      background: #C1C672
+
+
+    .form_input
+      padding: 8px 20px 8px 10px
+      background: white
+      border: 1px solid $line
+      border-radius: 5px
+      display: flex
+      align-items: center
+
+    .fold_board
+      position: absolute
+      padding: 15px 20px 0
+      border-radius: 0px 0px 5px 5px
+      background: 
+      border: 1px solid $line
+      background: white
+      box-shadow: 0px 4px 12px rgba(73, 73, 73, 0.25);
+
+      &__bottom
+        display: flex
+        border-top: 1px solid $line
+        justify-content: space-between
+        align-items: center
+        padding: 20px 0
+        margin-top: 20px
+
+        .text
+          img
+            margin-left: 10px
+            cursor: pointer
+
+        .type
+          display: flex
+          align-items: center
+
+        .tag_list__object
+          color: white
+          margin-left: 5px
+          margin-bottom: 0
+          background: lightblue

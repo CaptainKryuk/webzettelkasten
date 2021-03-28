@@ -7,7 +7,7 @@
       <p class="tag__name" :style="`border-bottom: 2px solid ${tag.color};`"># {{ tag.name }}</p>
 
       <div class="tag__ideas">
-        <div class="idea" v-for="(idea, index) in tag.ideas" :key="idea.id" @click="routeLink(`/minds/${idea.id}`)">
+        <div class="idea" v-for="(idea, index) in tag.ideas" :key="idea.id" @click="routeTo(`/minds/${idea.id}`)">
           <p class="idea__name">{{ idea.title }} <span class="base_name">({{ idea.base_name }})</span></p>
         </div>
       </div>
@@ -37,7 +37,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['routeLink']),
+    ...mapMutations(['routeTo']),
 
     getTagsIdeas() {
       axios.get(`${this.server}idea/get_tags_ideas/`)

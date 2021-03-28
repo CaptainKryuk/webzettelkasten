@@ -5,40 +5,80 @@ import store from '@/store'
 const routes = [
   {
     path: '',
-    component: () => import('@/components/HomeWrapper.vue'),
+    component: () => import('@/views/Home.vue')
+  },
+  {
+    path: '/mind',
+    component: () => import('@/views/articles/ArticlesWrapper.vue'),
+    beforeEnter (to, from, next) {
+      axios.get(store.state.server + 'user/authentication/',
+        {headers: store.state.auth_headers})
+        .then(function () {
+          next()
+        })
+        .catch(function () {
+        })
+    },
     children: [
       {
         path: '',
-        redirect: '/minds'
+        redirect: '/mind/recent'
       },
       {
-        path: 'minds',
-        component: () => import('@/components/components/Home.vue')
+        path: 'recent',
+        name: 'Recent',
+        component: () => import('@/views/articles/components/Recent.vue')
+      },
+      {
+        path: 'articles',
+        name: 'Articles',
+        component: () => import('@/views/articles/components/AllArticles.vue')
       },
       {
         path: 'tags',
-        component: () => import('@/components/components/Tags.vue')
-      },
-
-      {
-        path: '/minds/new',
-        beforeEnter: (to, from, next) => {
-          axios.post(`${store.state.server}idea/`)
-            .then((response) => {
-              next(`/minds/${response.data.id}/update`)
-            })
-        }
+        name: 'Tags',
+        component: () => import('@/views/articles/components/Tags.vue')
       },
       {
-        path: '/minds/:id',
-        component: () => import('@/components/components/DetailIdea.vue'),
+        path: 'links',
+        name: 'Links',
+        component: () => import('@/views/articles/components/Links.vue')
       },
-      {
-        path: '/minds/:id/update',
-        component: () => import('@/components/components/UpdateIdea.vue'),
-      }
     ]
-  }
+  },
+  {
+    path: '/mind/new',
+    beforeEnter (to, from, next) {
+      axios.post(store.state.server + 'articles/',
+        {},
+        {headers: store.state.auth_headers})
+        .then(function (response) {
+          next(`/mind/article/${response.data.id}`)
+        })
+        .catch(function (error) {
+          next('/404')
+        })
+    },
+  },
+  {
+    path: '/mind/article/:id',
+    component: () => import('@/views/articles/components/UpdateArticle.vue'),
+    name: 'NewArticle'
+  },
+  {
+    path: '/registration',
+    name: 'Registration',
+    component: () => import('@/views/account/Registration.vue')
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/account/Login.vue')
+  },
+  { 
+    path: "/logout", 
+    component: () => import("@/views/account/Logout.vue") 
+  },
 ]
 
 const router = createRouter({

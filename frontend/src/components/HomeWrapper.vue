@@ -14,9 +14,9 @@
       <transition name="menu-slide">
         <div class="drop_menu__wrapper" v-if="show_menu">
           <ul class="menu__list">
-            <li class="list_item" @click="routeLink('/minds')">Заметки</li>
-            <li class="list_item" @click="routeLink('/tags')">Теги</li>
-            <li class="list_item" @click="routeLink('/minds/new')">Новая заметка</li>
+            <li class="list_item" @click="routeTo('/minds')">Заметки</li>
+            <li class="list_item" @click="routeTo('/tags')">Теги</li>
+            <li class="list_item" @click="routeTo('/minds/new')">Новая заметка</li>
           </ul>
         </div>
       </transition>
@@ -44,7 +44,7 @@ export default {
       this.show_menu = false
     },
 
-    routeLink(link) {
+    routeTo(link) {
       this.$router.push(link)
       this.show_menu = false
     }
