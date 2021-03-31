@@ -94,6 +94,7 @@ class ContentBlock(models.Model):
     BLOCK_TYPES = (
         ('text', 'text'),
         ('title', 'title'),
+        ('code', 'code'),
         ('list', 'list')
     )
 
@@ -110,10 +111,19 @@ class ContentBlock(models.Model):
         ('h2', 'h2'),
         ('h3', 'h3')
     )
-    level = models.CharField("Уровень заголовка", max_length=3, blank=True)
+    level = models.CharField("Уровень заголовка", max_length=3, blank=True, default='h1')
 
     title_text = models.TextField("Текст заголовка", blank=True)
 
+
+    # * if block code
+    LANGUAGES = (
+        ('python', 'python'),
+        ('js', 'js'),
+        ('sql', 'sql'),
+        ('vuejs', 'vuejs')
+    )
+    code_lang = models.CharField("Язык программирования блока", max_length=20, choices=LANGUAGES, default="python")
 
     # * if block text settings
     inner_text = models.TextField("HTML текст, который будет обрабатываться", blank=True)       

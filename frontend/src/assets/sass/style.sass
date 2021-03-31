@@ -240,15 +240,15 @@
     background: white
     position: absolute
     height: 100vh
+
+    &.desktop
+      display: none
     
     .sidebar_top
       display: flex
       justify-content: space-between
       padding: 10px $padding
       margin-bottom: 15px
-  
-    &.desktop
-      display: none
 
     .article_link
       @include centerY
@@ -342,7 +342,7 @@
     .article_blocks
       .detail_block
         display: grid
-        grid-template-columns: 7% 1fr 7%
+        grid-template-columns: 40px 1fr 40px
         position: relative
 
         &__icon
@@ -358,10 +358,48 @@
           padding: 5px 7px
           position: relative
 
+          .row_numbered
+            position: absolute
+            top: 0
+            padding: 25px 10px 0
+            font-size: 12px
+            .number
+              display: block
+              color: $hint
+              height: 32px
+
+          .code_lang
+            position: absolute
+            top: 10px
+            right: 5%
+            width: 30px
+            height: 30px
+            transition: 0.5s
+            padding: 5px
+            border-radius: 3px
+            cursor: pointer
+            z-index: 2
+
+            img
+              width: 100%
+
+            .lang_lists
+              display: none
+              background: white
+              div
+                background: white
+            
+          .code_lang:hover
+            background: #e2e2e2
+            .lang_lists
+              display: block
+            
+
+
           .input_content
             display: inline
 
-          textarea
+          textarea, .textarea
             border: none
             outline: none
             width: 1px
@@ -370,6 +408,42 @@
             font-size: 18px
             margin-right: 30px
             line-height: 2
+            transition: 0.3s
+            // background: lightblue
+            overflow-y: hidden
+
+            ul, li
+              padding: 0
+              margin: 0
+              background: red
+
+          textarea::placeholder
+            color: $hint
+          
+          .title_textarea
+            // background: red
+            font-weight: 900
+            line-height: 1.4
+
+          .title_textarea::placeholder
+            font-weight: 900
+            font-size: 28px
+            color: $hint
+          
+          .h1
+            font-size: 28px
+
+          .h2
+            font-size: 24px
+          
+          .h3
+            font-size: 20px
+
+          .code_textarea
+            background: #FBFDFF
+            border: 1px solid $line
+            padding: 10px 15px 0 40px
+            font-size: 16px
 
 
         .block_input:hover
@@ -392,7 +466,7 @@
           &__item
             display: grid
             padding: 0 20px
-            grid-template-columns: 15% 20% 1fr
+            grid-template-columns: 50px 80px 1fr
             height: 50px
             align-items: center
             font-size: 14px
@@ -564,6 +638,61 @@
           width: 25%
           border-top: none
           border-left: 1px solid $line
+
+
+  .account
+
+  
+  .articles
+
+  
+  .new_article
+    // background: red
+    &__sidebar
+
+      &.desktop
+        display: block
+        position: fixed
+        left: 0
+        top: 0
+        height: 100vh
+        width: 281px
+        border-right: 1px solid $line
+
+    &__menu
+      width: calc( 100% - 281px )
+      position: fixed
+      left: 281px
+      background: white
+      border-left: 1px solid $line
+
+    &__content
+      padding-left: 450px
+      padding-top: 250px
+
+      .block_title
+        .title_input
+
+          textarea
+            font-size: 48px
+
+      .article_blocks
+        .detail_block
+          &__icon
+            opacity: 0
+            transition: 0.3s
+          .popup_menu
+            &__item:hover
+              cursor: pointer
+              background: #F9F9F9
+        
+        .detail_block:hover
+          .detail_block__icon
+            opacity: 1
+
+          
+
+
 
 
 

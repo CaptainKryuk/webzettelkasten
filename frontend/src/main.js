@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import store from './store'
 import router from './router'
+import axios from 'axios'
 
 // axios initialization
 import service from './axios'
@@ -15,6 +16,8 @@ let components = [...inputs]
 components.forEach(component => {
   app.component(component.name, component)
 })
+
+app.config.globalProperties.$axios = axios
 
 // directives
 app.directive('click-outside', {
@@ -41,6 +44,5 @@ app.directive('click-outside', {
     document.body.removeEventListener('click', el.clickOutsideEvent)
   }
 })
-
 
 app.mount('#app');

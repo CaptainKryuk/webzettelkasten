@@ -88,7 +88,13 @@ class ArticleViewSet(SecurityViewSet):
         """
         * get all articles
         """
-        pass
+        is_last = self.request.query_params.get('filter')
+        if is_last:
+            articles = Article.objects.filter(user=request.user).order_by('-modified')
+        else:
+            articles = Article.objects.filter(user=request.user)
+        serialized_articles = serializers.ArticleSerializer(articles, many=True)
+        return Response(serialized_articles.data)
 
 
     def create(self, request):
@@ -136,6 +142,7 @@ class ContentBlockViewSet(SecurityViewSet):
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response('no access', status=status.HTTP_403_FORBIDDEN)
 
     def destroy(self, request, pk=None):

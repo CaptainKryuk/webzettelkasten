@@ -44,12 +44,15 @@
         <textinput v-model="search" placeholder="Поиск по заголовкам и тексту" icon="/static/img/search.svg" />
       </div>
 
-
       <div class="pages_menu">
         <div v-for="(link, index) in links" :key="index" 
             :class="[$route.fullPath.includes(link.filter) ? 'selected' : '', 'menu__item']" @click="routeTo(link.url)">
           <p>{{ link.name }}</p>
         </div>
+      </div>
+
+      <div class="articles">
+        <recent></recent>
       </div>
     </div>
   </div>
@@ -59,8 +62,14 @@
 
 <script>
 import { mapMutations } from 'vuex'
+import Recent from './components/Recent.vue'
+
 export default {
   name: 'ArticlesWrapper',
+
+  components: {
+    'recent': Recent
+  },
 
   data() {
     return {
