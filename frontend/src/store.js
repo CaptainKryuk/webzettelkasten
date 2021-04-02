@@ -5,8 +5,8 @@ import router from './router'
 export default createStore({
   state() {
     return {
-      server: process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000/api/v1/' : 'http://213.108.252.208:4000/api/v1/',
-      media_server: process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000' : 'http://213.108.252.208:4000',
+      server: process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000/api/v1/' : 'http://213.108.252.201:4000/api/v1/',
+      media_server: process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000' : 'http://213.108.252.201:4000',
 
       email: localStorage.getItem('email'),
       id: localStorage.getItem('id'),
