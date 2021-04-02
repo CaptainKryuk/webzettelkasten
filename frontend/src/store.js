@@ -6,6 +6,7 @@ export default createStore({
   state() {
     return {
       server: process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000/api/v1/' : 'http://213.108.252.208:4000/api/v1/',
+      media_server: process.env.NODE_ENV === 'development' ? 'http://127.0.0.1:8000' : 'http://213.108.252.208:4000',
 
       email: localStorage.getItem('email'),
       id: localStorage.getItem('id'),
@@ -28,6 +29,14 @@ export default createStore({
       })
     },
 
+    getArticles({ commit, state }) {
+      axios.get(`${state.server}articles?filter=last`,
+        {headers: state.auth_headers})
+        .then((response) => {
+          state.articles = response.data
+        })
+    },
+
     getArticle({ commit, state }, id) {
       return new Promise((resolve, reject) => {
         axios.get(`${state.server}articles/${id}/`,
@@ -40,6 +49,14 @@ export default createStore({
   },
 
   mutations: {
+    DELETE_ARTICLE(state, id) {
+      state.articles.forEach((article, index) => {
+        if (Number(article.id) === Number(id)) {
+          state.articles.splice(index, 1)
+        }
+      })
+    },
+
     UPDATE_EMAIL(state, email) {
       localStorage.setItem('email', email)
       state.email = email

@@ -41,7 +41,7 @@
       </div>
 
       
-      <list-mixin v-if="block.block_type === 'list'"
+      <list-com v-if="block.block_type === 'list'"
                   v-model="block.inner_text" 
                   :id_number="random_number"
                   @keydown_tab_exact="addTabSpace"
@@ -52,7 +52,19 @@
                   @keydown_up="handleInput"
                   @focus="is_textarea_focus = true"
                   @blur="is_textarea_focus = false"
-                  @keydown_down="handleInput"></list-mixin>
+                  @keydown_down="handleInput"></list-com>
+
+      <img-com v-if="block.block_type === 'img'"
+               :id_number="random_number"
+               :block="block"
+               :index="index"
+               @update="block.images = $event"
+               @keydown_enter_exact="handleInput"
+               @keydown_enter_shift="createBlock($event)"
+               @keydown_enter_ctrl="createBlock($event)"
+               @keydown_backspace="deleteBlock"
+               @keydown_up="handleInput"
+               @keydown_down="handleInput"></img-com>
 
     </label>
 
@@ -87,8 +99,9 @@ import mixinAutoResize from "@/global/mixins/autoResize.js";
 import _ from 'lodash';
 import axios from 'axios'
 import { mapMutations, mapState } from 'vuex';
-import ListMixin from './components/ListMixin'
+import List from './components/List.vue'
 import ListFunctionsMixinVue from './mixins/ListFunctionsMixin.vue';
+import Img from './components/Img.vue'
 
 export default {
   name: 'EditBlock',
@@ -98,7 +111,8 @@ export default {
   mixins: [mixinAutoResize, ListFunctionsMixinVue],
 
   components: {
-    'list-mixin': ListMixin
+    'list-com': List,
+    'img-com': Img
   },
 
   data() {
@@ -116,7 +130,10 @@ export default {
 
       langs: ['python', 'sql', 'js', 'vuejs'],
 
-      is_textarea_focus: false
+      is_textarea_focus: false,
+
+      // blocks which use textarea block
+      text_types: ['text', 'title', 'code']
     }
   },
 
@@ -154,7 +171,7 @@ export default {
       handler() {
         this.debouncedUpdateBlock()
       }
-    }
+    },
   },
 
   created() {
@@ -244,6 +261,11 @@ export default {
               }
 
             }
+          } 
+
+          else if (this.block.block_type === 'img') {
+            e.preventDefault()
+            this.createOrFocus(e)
           }
         }
       } 
@@ -252,16 +274,16 @@ export default {
         // * backspace
         let blank_string = this.block.inner_text.replace(/<\/?\s*[ullibr][^>]*>/g, '').replace(/\s*/, '')
         let textarea = this.getCurrentInput()
-
         if ((textarea.selectionStart === 0 && textarea.selectionEnd === 0)
             || (this.block.block_type === 'list' 
                 && window.getSelection().getRangeAt(0).startOffset === 0 
-                && this.getListLiChilds(textarea).length === 1)) {
+                && this.getListLi(textarea).length === 1)) {
           if (!blank_string.length ) {
             // * when block is already blank -> delete if
-            this.deleteBlock()
+            this.deleteBlock(e)
           } else {
             // * if we have content in this block go to previous
+            e.preventDefault()
             this.focusOnBlock('previous', true)
           }
         }
@@ -275,22 +297,94 @@ export default {
           this.goOverPopupMenu(e.key)
         } else {
           let textarea = this.getCurrentInput()
-          let splitted_text = this.block.inner_text.split(/\r*\n/)
-
+          
           if (e.key === 'ArrowUp') {
-            if (splitted_text[0].length >= textarea.selectionStart) {
-              e.preventDefault()
-              this.focusOnBlock('previous', true)
+            // 8.54054054054054 - длина 1 символа текстовой строки
+            // 6.651162790697675 - длина 1 символа кода
+            // * get number of elements in 1 line in textarea
+            let line_length = Math.round(textarea.clientWidth / 8.54054054054054)
+
+            if (this.text_types.includes(this.block.block_type)) {
+              // * block text/code/title
+              let split_line = textarea.value.split(/\n/)
+
+              if (textarea.selectionStart <= line_length && textarea.selectionStart <= split_line[0].length) {
+                e.preventDefault()
+                this.focusOnBlock('previous', true)
+              }
+            } 
+            
+            else if (this.block.block_type === 'list') {
+              // * if list and current position < then first li length and < first line -> go to previous block
+              let first_li = this.getListLi(textarea)[0].innerText
+              let cursor = this.getCaretCharacterOffsetWithin(textarea)
+              if (cursor[0] <= first_li.length 
+                  && first_li[first_li.length - 1] === cursor[1][cursor[1].length - 1] // * check that last elements of line is equal
+                  && cursor[0] < line_length) {
+                e.preventDefault()
+                this.focusOnBlock('previous')
+              }
             }
+
+            else if (this.block.block_type === 'img') {
+              this.focusOnBlock('previous')
+            }
+
           } else if (e.key === 'ArrowDown') {
-            if (textarea.selectionStart >= this.block.inner_text.length - splitted_text[splitted_text.length - 1].length
-                || this.block.inner_text.length === 0) {
-              e.preventDefault()
-              this.focusOnBlock('next', true)
+            /*
+            * Блок текстовый/code/title: если каретка находится на последней строке-> перенос(нужно знать сколько в строке символов и считать по ним)
+            * Блок list: если находится на последней строке - перенос
+            */
+
+
+            let textarea = this.getCurrentInput()
+            let line_length = Math.round(textarea.clientWidth / 8.54054054054054)
+
+            if (this.block.block_type === 'code') {
+              line_length = Math.round(textarea.clientWidth / 6.651162790697675)
+            }
+
+            if (this.text_types.includes(this.block.block_type)) {
+              let split_value = textarea.value.split(/\n/)
+              let last_line = split_value[split_value.length-1]
+
+              if (textarea.selectionStart >= textarea.value.length - last_line.length) {
+                // * check that our cursor on last line
+                if (last_line.length > line_length) {
+                  let elements_in_last_line = this.getElementsInLastLine(last_line, line_length)
+                  // * check that we on last line when clicked arrow
+                  if (textarea.selectionStart > (last_line.length - elements_in_last_line)) {
+                    e.preventDefault()
+                    this.focusOnBlock('next')
+                  }
+                } else {
+                  e.preventDefault()
+                  this.focusOnBlock('next')
+                }
+              }
+            } else if (this.block.block_type === 'list') {
+              let li = this.getListLi(textarea)
+              let list_length = this.getListLength(textarea)
+              let last_li = li[li.length - 1]
+              let elements_in_last_line = this.getElementsInLastLine(last_li.innerText, line_length)
+              let cursor = this.getCaretCharacterOffsetWithin(textarea)
+              let clean_last_li =  last_li.innerText.replace(/\s*/, '')
+
+              if ((clean_last_li.length !== 0 ? last_li.innerText : null) === (cursor[1].length ? cursor[1] : null) 
+                  && cursor[0] >= (list_length - elements_in_last_line)) {
+                e.preventDefault()
+                this.focusOnBlock('next')
+              }
+            } else if (this.block.block_type === 'img') {
+              this.focusOnBlock('next')
             }
           }
         }    
       }
+    },
+
+    getElementsInLastLine(last_line, line_length) {
+      return Math.floor(((last_line.length / line_length) - Math.floor(last_line.length / line_length)) * line_length)
     },
 
     changeBlock(e, new_type) {
@@ -322,6 +416,11 @@ export default {
       else if (new_type === 'code') {
         this.block.inner_text = ''
         e.srcElement.style.height = '42px'
+      }
+
+      else if (new_type === 'img') {
+        this.block.inner_text = ''
+        this.getCurrentInput().focus()
       }
 
     },
@@ -374,7 +473,7 @@ export default {
         })
     },
 
-    deleteBlock() {
+    deleteBlock(e) {
       /*
       * check that block is not last and 
       * delete current block and focus on previous 
@@ -388,6 +487,9 @@ export default {
             this.DELETE_BLOCK(this.block.id)
           })
       } else {
+        if (this.block.block_type === 'list' || this.block.block_type === 'img') {
+          this.changeBlock(e, 'text')
+        }
         this.focusOnTitle()
       }
 
@@ -400,7 +502,7 @@ export default {
         if (this.index !== 0) {
           parent = textarea.parentElement.parentElement.previousSibling
         } else {
-          this.focusOnTitle()
+          this.focusOnTitle(textarea.selectionStart)
         }
       } else if (type === 'next') {
         if (this.index < this.article.blocks.length - 1) {
@@ -415,6 +517,7 @@ export default {
           found_input = parent.querySelector('.textarea')
           is_div = true
         }
+
         if (found_input) {
           found_input.focus()
 
@@ -432,18 +535,12 @@ export default {
 
     },
 
-    focusOnLastBlock() {
-      setTimeout(() => {
-        let input_blocks = document.querySelectorAll('.block_input')
-        input_blocks[input_blocks.length - 1].focus()
-      })
-
-    },
-
-    focusOnTitle() {
+    focusOnTitle(selectionPosition=9999) {
       let textarea = this.getCurrentInput()
       let title_parent = textarea.parentElement.parentElement.parentElement.previousSibling
       let title_input = title_parent.querySelector('textarea')
+      title_input.selectionStart = selectionPosition
+      title_input.selectionEnd = selectionPosition
       title_input.focus()
     },
 
@@ -491,7 +588,6 @@ export default {
     },
 
     closeLangs() {
-      console.log('te', this.index)
       this.show_langs = false
     },
 

@@ -27,12 +27,24 @@ const routes = [
       {
         path: 'recent',
         name: 'Recent',
-        component: () => import('@/views/articles/components/Recent.vue')
+        component: () => import('@/views/articles/components/Recent.vue'),
+        children: [
+          {
+            path: ':id/delete',
+            component: () => import('@/views/articles/components/DeleteArticle.vue')
+          }
+        ]
       },
       {
         path: 'articles',
         name: 'Articles',
-        component: () => import('@/views/articles/components/AllArticles.vue')
+        component: () => import('@/views/articles/components/AllArticles.vue'),
+        children: [
+          {
+            path: ':id/delete',
+            component: () => import('@/views/articles/components/DeleteArticle.vue')
+          }
+        ]
       },
       {
         path: 'tags',

@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from mind.models import Idea, Tag, Article, ContentBlock
+from mind.models import Idea, Tag, Article, ContentBlock, BlockImage
 from rest_framework import status, viewsets
 from rest_framework.decorators import (action, api_view,
                                        authentication_classes,
@@ -118,8 +118,18 @@ class ArticleViewSet(SecurityViewSet):
         return Response(serialized_data.data)
 
 
-class ContentBlockViewSet(SecurityViewSet):
+    def destroy(self, request, pk):
+        """
+        delete article
+        """
+        article = Article.objects.filter(id=pk).first()
+        if article:
+            article.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response('no article', status=status.HTTP_400_BAD_REQUEST)
 
+
+class ContentBlockViewSet(SecurityViewSet):
 
     def create(self, request):
         """
@@ -151,3 +161,13 @@ class ContentBlockViewSet(SecurityViewSet):
             block.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response('error', status=status.HTTP_400_BAD_REQUEST)
+
+
+class BlockImageViewSet(SecurityViewSet):
+
+    def create(self, request):
+        serializer = serializers.BlockImageSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -14,7 +14,7 @@
 
       <div v-for="(art, index) in articles" :key="index" class="sidebar_articles">
         <div class="article_link">
-          <router-link :to="`/mind/article/${route.params.id}`">{{ art.name }}</router-link>
+          <router-link :to="`/mind/article/${$route.params.id}`">{{ art.name }}</router-link>
         </div>
       </div>
     </div>
@@ -37,7 +37,7 @@
 
         <div v-for="(art, index) in articles" :key="index" class="sidebar_articles">
           <div class="article_link">
-            <router-link :to="`/mind/article/${route.params.id}`">{{ art.name }}</router-link>
+            <router-link :to="`/mind/article/${$route.params.id}`">{{ art.name }}</router-link>
           </div>
         </div>
 

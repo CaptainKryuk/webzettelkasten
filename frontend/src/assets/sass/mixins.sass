@@ -46,6 +46,15 @@
   transform: translateX(-100%)
 
 
+.floating-right-enter-from,
+.floating-right-leave-to
+  transform: translateX(0)
+
+.floating-right-enter-active,
+.floating-right-leave-active
+  transform: translateX(100%)
+
+  
 .icon
   @include centerXY
   margin-right: 10px
@@ -178,3 +187,70 @@
           margin-left: 5px
           margin-bottom: 0
           background: lightblue
+
+
+// avatar
+.user_avatar
+  width: 45px
+  height: 45px
+
+  .avatar
+    width: 100%
+    height: 100%
+    border-radius: 50%
+    border: 2px solid $text
+    @include centerXY
+    font-weight: 900
+    font-size: 18px
+
+// dropdown
+.dropdown-object
+  position: relative
+  .icon, &__title
+    padding: 5px
+    cursor: pointer
+    border-radius: 2px
+    width: 30px
+    height: 30px
+
+  &__title
+    padding: 5px 15px
+    width: auto
+    height: auto
+    color: white
+
+  .icon:hover, &__title:hover
+    background: #F5F5F5
+
+  .fold 
+    position: absolute
+    background: white
+    margin-top: 5px 
+    left: 0
+    border-radius: 5px
+    z-index: 1
+    border: 1px solid $line
+
+    .option 
+      padding: 15px 15px 15px 10px
+      display: flex
+      @include centerY
+      transition: 0.3s
+      cursor: pointer
+
+      &__icon 
+        @include centerXY
+
+        img 
+            width: 25px
+            height: 25px
+      
+      &__text 
+        font-weight: bold
+        font-size: 14px
+        color: $text
+        white-space: nowrap
+        margin-left: 10px
+
+    .option:hover
+      background: #F5F5F5

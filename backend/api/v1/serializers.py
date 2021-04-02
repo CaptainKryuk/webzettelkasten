@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from mind.models import Idea, Tag, Article, ContentBlock
+from mind.models import Idea, Tag, Article, ContentBlock, BlockImage
 from users.models import User
 from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
@@ -22,9 +22,18 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 
 class ContentBlockSerializer(serializers.ModelSerializer):
+    images = serializers.SerializerMethodField()
+
     class Meta:
         model = ContentBlock
         fields = '__all__'
+
+    def get_images(self, instance):
+        if instance.block_type == 'img':
+            queryset = instance.blockimage_set.all()
+            return get_all_fields_serializer(BlockImage, queryset, many=True).data
+        return []
+
 
 
 class CreateUserSerializer(serializers.Serializer):
@@ -44,10 +53,15 @@ class CreateUserSerializer(serializers.Serializer):
             raise serializers.ValidationError({'email': "Пользователь с таким email уже существует"})
 
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = '__all__'
+
+
+class BlockImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BlockImage
         fields = '__all__'
 
 
@@ -58,3 +72,4 @@ def get_all_fields_serializer(instance, data, many=False):
             fields = '__all__'
 
     return AllFieldsSerializer(data, many=many)
+

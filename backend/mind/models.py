@@ -95,7 +95,8 @@ class ContentBlock(models.Model):
         ('text', 'text'),
         ('title', 'title'),
         ('code', 'code'),
-        ('list', 'list')
+        ('list', 'list'),
+        ('img', 'img')
     )
 
     order_number = models.IntegerField("Место по порядку", blank=True, default=0)
@@ -126,7 +127,9 @@ class ContentBlock(models.Model):
     code_lang = models.CharField("Язык программирования блока", max_length=20, choices=LANGUAGES, default="python")
 
     # * if block text settings
-    inner_text = models.TextField("HTML текст, который будет обрабатываться", blank=True)       
+    inner_text = models.TextField("HTML текст, который будет обрабатываться", blank=True) 
+    
+
 
 
     class Meta:
@@ -155,6 +158,13 @@ class ContentBlock(models.Model):
 
         super(ContentBlock, self).save(*args, **kwargs)
 
+
+class BlockImage(AbstractDateTimeModel):
+    block = models.ForeignKey(ContentBlock, on_delete=models.CASCADE)
+    # * if block type is img
+    file = models.ImageField(verbose_name="Картинка", blank=False, null=True)
+    filesize = models.IntegerField("Размер файла")
+    filename = models.CharField("Название файла", max_length=255)      
 
 
 

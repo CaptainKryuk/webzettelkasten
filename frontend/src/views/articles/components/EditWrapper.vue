@@ -1,5 +1,5 @@
 k<template>
-  <div class="edit_article_block">
+  <div :class="['edit_article_block', no_content ? 'no_content': '']">
     <div class="block_title">
 
       <!-- // * add tag -->
@@ -13,10 +13,13 @@ k<template>
       <!-- // * change title -->
       <div class="title_input">
         <textarea v-model="article.title" 
+                  ref='title_input'
                   @input="mixin_autoResize_resize" 
                   placeholder="Придумайте название"
-                  @keydown.enter.exact.prevent="endEditTitle()"
-                  @keydown.down="endEditTitle()"
+                  @keydown.enter.exact.prevent="endEditTitle"
+                  @keydown.enter.ctrl.prevent="endEditTitle"
+                  @keydown.enter.shift.prevent="endEditTitle"
+                  @keydown.down="endEditTitle"
                   rows="1" />
       </div>
 
@@ -37,11 +40,12 @@ k<template>
 import { mapState } from 'vuex'
 import mixinAutoResize from "@/global/mixins/autoResize.js"
 import EditBlock from './edit/EditBlock'
+import ListFunctionsMixinVue from './edit/mixins/ListFunctionsMixin.vue'
 
 export default {
   name: 'EditWrapper',
 
-  mixins: [mixinAutoResize],
+  mixins: [mixinAutoResize, ListFunctionsMixinVue],
 
   components: {
     'editor': EditBlock
@@ -55,10 +59,19 @@ export default {
 
   computed: {
     ...mapState(['server', 'article']),
-  },
 
-  mounted() {
-    document.execCommand('defaultParagraphSeparator', false, 'p')
+    no_content() {
+      if ((this.article.title && this.article.title.length) 
+          || (this.article.blocks && this.article.blocks[0].inner_text && this.article.blocks[0].inner_text.length)
+          || (this.article.blocks && this.article.blocks.length > 1)) {
+        console.log(1)
+        // if (this.article.title.length || this.article.blocks[0].inner_text.length ) {
+          // console.log(2)
+          return false
+        // }
+      }
+      return true
+    },
   },
 
   methods: {
@@ -68,21 +81,32 @@ export default {
       if (type === 'last') {
         input_blocks[input_blocks.length - 1].focus()
       } else {
-        input_blocks[0].focus()
+        let textarea;
+        let is_div = false
+
+        textarea = input_blocks[0].querySelector('textarea') 
+        if (!textarea) {
+          textarea = input_blocks[0].querySelector('.textarea')
+          is_div = true
+        }
+
+        if (textarea) {
+          if (is_div) {
+            this.setListCaret(textarea, 'start')
+          } else {
+            textarea.selectionStart =  0
+            textarea.selectionEnd = 0
+            // textarea.selectionStart = this.$refs.title_input.selectionStart
+            // textarea.selectionEnd = this.$refs.title_input.selectionStart
+            textarea.focus()
+          }
+        }
       }
     },
-    
-    onInput(event) {
-      const turndown = new TurndownService({
-        emDelimiter: '_',
-        linkStyle: 'inlined',
-        headingStyle: 'atx'
-      })
-      this.$emit('input', turndown.turndown(event.target.innerHTML))
-    },
 
 
-    endEditTitle() {
+    endEditTitle(e) {
+      e.preventDefault()
       this.focusOnBlock('first')
     },
   }

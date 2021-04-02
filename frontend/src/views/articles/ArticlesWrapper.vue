@@ -1,11 +1,13 @@
 <template>
 <transition name="appear" appear>
   <div class="articles" v-if="show">
+
     <div class="articles__top">
       <div class="top__text">
         <h1>Все статьи и мысли</h1>
         <img src="@/assets/img/plus.svg" @click="routeTo('/mind/new')" />
       </div>
+
       <div class="top__menu">
         <!-- desctop elements -->
         <div class="search_menu">
@@ -13,6 +15,11 @@
         </div>
 
         <!-- user icon -->
+        <div class="user_avatar">
+          <div class="avatar">
+            <span class="avatar__username">{{ username[0].toUpperCase() }} </span>
+          </div>
+        </div>
 
         <!-- mobile button -->
         <div class="menu_icon">
@@ -34,12 +41,11 @@
           </div>
         </transition>
 
-
       </div>
     </div>
 
 
-    <div class="articles__content">
+    <div :class="['articles__content']">
       <div class="content__search">
         <textinput v-model="search" placeholder="Поиск по заголовкам и тексту" icon="/static/img/search.svg" />
       </div>
@@ -52,7 +58,7 @@
       </div>
 
       <div class="articles">
-        <recent></recent>
+        <router-view></router-view>
       </div>
     </div>
   </div>
@@ -61,15 +67,10 @@
 </template>
 
 <script>
-import { mapMutations } from 'vuex'
-import Recent from './components/Recent.vue'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
   name: 'ArticlesWrapper',
-
-  components: {
-    'recent': Recent
-  },
 
   data() {
     return {
@@ -83,6 +84,10 @@ export default {
         {filter: 'links', url: '/mind/links', name: 'Ссылки'}
       ]
     }
+  },
+
+  computed: {
+    ...mapState(['username'])
   },
 
   mounted() {
