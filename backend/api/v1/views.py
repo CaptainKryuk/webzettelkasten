@@ -88,11 +88,11 @@ class ArticleViewSet(SecurityViewSet):
         """
         * get all articles
         """
-        is_last = self.request.query_params.get('filter')
-        if is_last:
-            articles = Article.objects.filter(user=request.user).order_by('-modified')
-        else:
-            articles = Article.objects.filter(user=request.user)
+        # is_last = self.request.query_params.get('filter')
+        # if is_last:
+        #     articles = Article.objects.filter(user=request.user).order_by('-modified')
+        # else:
+        articles = Article.objects.filter(user=request.user)
         serialized_articles = serializers.ArticleSerializer(articles, many=True)
         return Response(serialized_articles.data)
 
