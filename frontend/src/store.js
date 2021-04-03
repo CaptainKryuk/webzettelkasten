@@ -30,8 +30,8 @@ export default createStore({
     },
 
     getArticles({ commit, state }) {
-      // ?filter=last
-      axios.get(`${state.server}articles/`,
+      // 
+      axios.get(`${state.server}articles?filter=last/`,
         {headers: state.auth_headers})
 
         .then((response) => {
