@@ -2,6 +2,11 @@
   <div :id="`input_${id_number}`"
        class="textarea img_textarea">
 
+    <label v-if="block.images && !block.images.length" class="file_label">
+      Выберите картинку для загрузки
+      <input type="file" id="file" ref="file" @change="uploadFile">
+    </label>
+
     <div class="img_area" @click="selectImage">
       <img v-if="block.images && block.images[0]" 
            :src="`${media_server}${block.images[0].file}`" 
@@ -18,10 +23,6 @@
                 @keydown.up="$emit('keydown_up', $event)"
                 @keydown.down="$emit('keydown_down', $event)"></textarea>
     </div>
-
-    <label v-if="block.images && !block.images.length">File
-      <input type="file" id="file" ref="file" @change="uploadFile">
-    </label>
   </div>
 </template>
 

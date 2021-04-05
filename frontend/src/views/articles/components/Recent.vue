@@ -1,29 +1,7 @@
-c<template>
+<template>
 
-<div class="articles__detail" v-for="(article, index) in articles" :key="index">
-  <div class="article__icon move">
-    <div class="img">
-      <img src="@/assets/img/move.svg" />
-    </div>
-  </div>
-
-  <div class="article__icon">
-    <div class="img">
-      <img src="@/assets/img/book.svg" />
-    </div>
-  </div>
-
-  <div class="article__content">
-    <p class="a_title" @click="routeTo(`/mind/article/${article.id}`)">{{ article.title || 'blank' }}</p>
-    <p class="a_data">{{ article.base_name }}</p>
-  </div>
-
-  <div class="article__icon">
-    <div class="img">
-      <!-- <img src="@/assets/img/more.svg" /> -->
-      <dropdown-object icon="more" :is_icon="true" :options="[{name: 'Удалить', link: `/mind/recent/${article.id}/delete`}]"></dropdown-object>
-    </div>
-  </div>
+<div class="articles__detail not_move" v-for="(article, index) in filtered_articles" :key="index">
+  <detail-article :article="article" type="recent"></detail-article>
 </div>
 
 <router-view></router-view>
@@ -32,15 +10,28 @@ c<template>
 
 <script>
 import { mapActions, mapMutations, mapState } from 'vuex'
+import DetailArticleInList from './DetailArticleInList'
+
 export default {
   name: 'Recent',
+
+  components: {
+    'detail-article': DetailArticleInList
+  },
 
   mounted() {
     this.getArticles()
   },
 
   computed: {
-    ...mapState(['server', 'auth_headers', 'articles'])
+    ...mapState(['server', 'auth_headers', 'articles', 'articles_search']),
+
+    filtered_articles() {
+      if (this.articles_search.length) {
+        return this.articles.filter((a) => a.title.includes(this.articles_search))
+      }
+      return this.articles
+    }
   },
 
   methods: {

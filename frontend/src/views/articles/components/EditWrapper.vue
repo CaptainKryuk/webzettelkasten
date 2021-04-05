@@ -1,14 +1,11 @@
-k<template>
-  <div :class="['edit_article_block', no_content ? 'no_content': '']">
+<template>
+<transition name="appear" appear>
+  <div :class="['edit_article_block', no_content ? 'no_content': '']" 
+       v-if="!article_loading && Object.keys(article).length">
     <div class="block_title">
 
       <!-- // * add tag -->
-      <div class="add_tag_block">
-        <div class="icon">
-          <img src="@/assets/img/plus.svg" />
-        </div>
-        <p class="text">Добавить тэг</p>
-      </div>
+      <tag-list :article="article" @updateTags="article.tags = $event"></tag-list>
 
       <!-- // * change title -->
       <div class="title_input">
@@ -20,13 +17,21 @@ k<template>
                   @keydown.enter.ctrl.prevent="endEditTitle"
                   @keydown.enter.shift.prevent="endEditTitle"
                   @keydown.down="endEditTitle"
+                  @focus="is_title_focussed = true"
+                  @blur="is_title_focussed = false"
                   rows="1" />
       </div>
 
     </div>
 
     <div class="article_blocks">
-      <editor v-for="(block, index) in article.blocks" :key="block.id" :block="block" :index="index"></editor>
+      <editor v-for="(block, index) in article.blocks" 
+              :key="block.id" 
+              :block="block" 
+              :index="index"
+              :drag_index="block.order_number"
+              :drag_id="block.id"
+              class='detail_block_wrapper'></editor>
     </div>
 
     <!-- this label fit bottom of page and when click on this area last input in article blocks makes focussed  -->
@@ -34,6 +39,7 @@ k<template>
 
 
   </div>
+</transition>
 </template>
 
 <script>
@@ -41,40 +47,80 @@ import { mapState } from 'vuex'
 import mixinAutoResize from "@/global/mixins/autoResize.js"
 import EditBlock from './edit/EditBlock'
 import ListFunctionsMixinVue from './edit/mixins/ListFunctionsMixin.vue'
+import TagList from './TagList'
+import DragAndDropMixin from './edit/mixins/DragAndDropMixin'
 
 export default {
   name: 'EditWrapper',
 
-  mixins: [mixinAutoResize, ListFunctionsMixinVue],
+  mixins: [mixinAutoResize, ListFunctionsMixinVue, DragAndDropMixin],
 
   components: {
-    'editor': EditBlock
+    'editor': EditBlock,
+    'tag-list': TagList
   },
 
   data() {
     return {
       selected_block: null,
+      is_title_focussed: false
+    }
+  },
+
+  watch: {
+    'article.title': {
+      handler() {
+        this.debouncedUpdateArticle()
+      }
+    },
+
+    'fullPath': {
+      handler() {
+        this.setupTitle()
+      }
     }
   },
 
   computed: {
-    ...mapState(['server', 'article']),
+    ...mapState(['server', 'auth_headers', 'article', 'article_loading']),
 
     no_content() {
       if ((this.article.title && this.article.title.length) 
           || (this.article.blocks && this.article.blocks[0].inner_text && this.article.blocks[0].inner_text.length)
           || (this.article.blocks && this.article.blocks.length > 1)) {
-        console.log(1)
-        // if (this.article.title.length || this.article.blocks[0].inner_text.length ) {
-          // console.log(2)
           return false
-        // }
       }
       return true
     },
+
+    fullPath() {
+      return this.$route.fullPath
+    }
+
+  },
+
+  created() {
+    this.debouncedUpdateArticle = _.debounce(this.updateArticle, 500)
+  },
+
+  mounted() {
+    this.setupTitle()
+    setTimeout(() => {
+      this.setupDragAndDrop('article_blocks', 'detail_block')
+    }, 300)
+    
   },
 
   methods: {
+    setupTitle() {
+      setTimeout(() => {
+        let input = this.$refs.title_input
+        if (input) {
+          input.style.height = 'auto'
+          input.style.height = `${input.scrollHeight}px`
+        }
+      }, 200)
+    },
 
     focusOnBlock(type='last') {
       let input_blocks = document.querySelectorAll('.block_input')
@@ -96,12 +142,22 @@ export default {
           } else {
             textarea.selectionStart =  0
             textarea.selectionEnd = 0
-            // textarea.selectionStart = this.$refs.title_input.selectionStart
-            // textarea.selectionEnd = this.$refs.title_input.selectionStart
             textarea.focus()
           }
         }
       }
+    },
+
+    updateArticle() {
+      this.$axios.put(`${this.server}articles/${this.$route.params.id}/`,
+        this.article,
+        {headers: this.auth_headers})
+    },
+
+    updateMovedObject() {
+      this.$axios.put(`${this.server}block/${this.active_id}/`,
+        {order_number: this.new_order_number},
+        {headers: this.auth_headers})
     },
 
 

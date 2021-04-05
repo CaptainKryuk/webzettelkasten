@@ -174,7 +174,7 @@
       color: white
       top: 0
       left: 0
-      z-index: 2
+      z-index: 5
 
       .close_icon
         position: absolute
@@ -221,56 +221,92 @@
 
     .articles
       padding-bottom: 150px
+    
     .articles__detail
       border-bottom: 1px solid $line
       padding: 25px 0
       display: grid
       grid-template-columns: 40px 50px 1fr 50px
+      background: white
+
+      &.not_move
+        grid-template-columns: 50px 1fr 50px
+
+      &.selected
+        opacity: 0.5
+        background: #f3f3f3
 
       .article__icon
         .img
           cursor: pointer
 
       .article__content
+        overflow: hidden
         .a_title
-          @include limited-text
           font-weight: bold
           margin-bottom: 5px
           font-size: 18px
           cursor: pointer
-          display: inline
+          display: block
+          position: relative
+          width: 100%
+
+          .text
+            @include limited-text
+            margin-bottom: 5px
+            margin-right: 20px
+
+          .tag_list
+            .tag
+              font-size: 12px
+              padding: 4px 10px 4px 25px
+              margin-bottom: 10px
+            .pre_tag_block
+              height: 18px
+              left: 10px
+
+        .no_title
+          color: $hint
+          font-weight: normal
 
         .a_data
           font-size: 14px
           color: $hint
-        
+  
 
 
 .new_article    
   .shadow_wrapper
-    position: absolute
+    position: fixed
     top: 0
     left: 0
     width: 100%
     background: rgba(0, 0, 0, 0.62)
     height: 100vh
+    max-height: 100vh
     transition: 0.5s
-    z-index: 1
+    z-index: 5
+
+    &.new_article__content
+      padding: 0
 
   .new_article_sidebar
     height: 60%
     height: 100%
 
+
   &__sidebar
-    width: 60%
+    width: 70%
     transition: 0.2s
-    z-index: 1
+    z-index: 5
     background: white
-    position: absolute
+    position: fixed
     height: 100vh
+    overflow-y: auto
 
     &.desktop
       display: none
+      
     
     .sidebar_top
       display: flex
@@ -278,19 +314,31 @@
       padding: 10px $padding
       margin-bottom: 15px
 
+      .icon
+        cursor: pointer
+
     .article_link
       @include centerY
       padding: 10px 20px
+      cursor: pointer
+      transition: 0.3s
+      font-weight: 600
+      color: $description
 
       &.selected
-        background: #F8F8F8
+        background: #f0f0f0
+        color: $text
+        // font-weight: bold
 
       .text
         color: $description
+    
+    .article_link:hover
+      background: #f7f7f7
 
 
   &__menu
-    z-index: 1
+    z-index: 4
     height: 8vh
     position: fixed
     width: 100%
@@ -303,7 +351,6 @@
     .article_info
       width: 70%
       @include centerY
-      
 
       .article_name
         font-weight: bold
@@ -311,6 +358,7 @@
     
     .icon
       margin-right: 15px
+      cursor: pointer
 
       img
         width: 24px
@@ -336,20 +384,68 @@
     .block_title
       position: relative
       padding: 40px 0 10px
-      .add_tag_block
-        @include centerY
-        transition: 0.5s
-        position: absolute
-        top: 0
 
-        .icon
+      .tag_manage
+        display: flex
+        align-items: flex-end
+        flex-wrap: wrap
+  
+        img
           width: 32px
-          height: 32px
+          cursor: pointer
+          margin-right: 15px
 
-        .text
-          font-size: 16px
-          color: $hint
-          font-weight: bold
+
+        .add_tag_block
+          @include centerY
+          transition: 0.5s
+          // position: absolute
+          top: 0
+          cursor: pointer
+          height: 37px
+
+          .icon
+            width: 32px
+            height: 32px
+
+          .text
+            font-size: 16px
+            color: $hint
+            font-weight: bold
+            transition: 0.3s
+
+        .add_tag_block:hover
+          .text
+            color: $text
+
+        .tag_input
+          height: 37px
+          position: relative
+          form
+            height: 100%
+          input
+            border: none
+            outline: none
+            height: 100%
+            font-size: 18px
+
+          .fold_tags
+            position: absolute
+            top: 40px
+            border: 1px solid $line
+            border-radius: 2px
+            background: white
+            z-index: 3
+
+            .default_tag
+              padding: 10px 35px
+              cursor: pointer
+              transition: 0.3sk
+
+            .default_tag:hover
+              background: #F8F8F8
+            
+
       
       .title_input
         width: 100%
@@ -373,6 +469,11 @@
         display: grid
         grid-template-columns: 40px 1fr 40px
         position: relative
+        // background: lightblue
+        cursor: grab
+
+        &.selected
+          background: #f5f5f5
 
         &__icon
           padding-top: 10px
@@ -380,6 +481,10 @@
           justify-content: center
           cursor: pointer
           align-items: flex-start
+
+          &.move
+            z-index: -1
+            cursor: grab
 
         .block_input
           outline: none
@@ -475,6 +580,7 @@
           .img_textarea
             width: 100%
             cursor: pointer
+            overflow-x: hidden
             textarea
               height: 1px
               width: 1px
@@ -488,6 +594,28 @@
 
             .focussed
               border: 4px solid lightblue
+
+            .file_label
+              width: 99%
+              border: 2px dashed $line
+              cursor: pointer
+              display: block
+              text-align: center
+              font-size: 14px
+              padding: 10px 0
+              color: $description
+              border-radius: 5px
+
+              input
+                position: absolute
+                height: 0px
+                width: 0px
+                background: white
+                color: white
+                top: 0
+                left: 0
+
+            
 
 
         .block_input:hover
@@ -505,7 +633,7 @@
           border-radius: 5px
           box-shadow: 0px 4px 4px rgba(225, 225, 225, 0.25)
           border: 1px solid $line
-          z-index: 2
+          z-index: 5
 
           &__item
             display: grid
@@ -550,9 +678,10 @@
 
 
 .approve__block
-  display: fixed
+  position: fixed
   width: 100%
   min-height: 100vh
+  z-index: 5
 
   .shadow_background
     width: 100%
@@ -776,23 +905,18 @@
 
       .articles__detail
         position: relative
-        grid-template-columns: 50px 1fr 50px
+
+        &.not_move
+          grid-template-columns: 50px 1fr 50px
+
+        .article__content
+          .a_title
+            display: flex
+            flex-wrap: wrap
 
         .article__icon
           &.move
             display: none
-
-      .articles__detail:hover::before
-        content: url('/static/img/move.svg')
-        width: 50px
-        height: 50px
-        position: absolute
-        left: -50px
-        top: 30px
-        transition: 0.3s
-        cursor: pointer
-
-
 
   
   .new_article
@@ -808,12 +932,29 @@
         width: 281px
         border-right: 1px solid $line
 
+        .sidebar_top
+          margin-top: 15px
+
     &__menu
       width: calc( 100% - 281px )
       position: fixed
       left: 281px
       background: white
       border-left: 1px solid $line
+      display: grid
+      grid-template-columns: 60% 40%
+      .article_info
+        align-items: center
+        .icon
+          &.desktop
+            display: flex
+
+          &.mobile
+            display: none
+
+      .article_actions
+        justify-content: space-between
+        width: 50%
 
     &__content
       $editWidth: 932px

@@ -3,6 +3,39 @@ from mind.models import Idea, Tag, Article, ContentBlock, BlockImage
 from users.models import User
 from django.db.utils import IntegrityError
 from django.core.exceptions import ValidationError
+import datetime
+
+
+class ArticlesListSerializer(serializers.ModelSerializer):
+    tags = serializers.SerializerMethodField()
+    hm_modified = serializers.SerializerMethodField()
+    hm_created = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Article
+        fields = '__all__'
+
+    def get_hm_modified(self, instance):
+        now = datetime.datetime.now()
+        delta = now-instance.modified.replace(tzinfo=None)
+        return self.valid_date(delta, action="update")
+
+    def get_hm_created(self, instance):
+        now = datetime.datetime.now()
+        delta = now - instance.created.replace(tzinfo=None)
+        return self.valid_date(delta)
+
+    def get_tags(self, instance): 
+        return [{'name': tag.name, 'color': tag.color} for tag in instance.tags.all()]
+
+    def valid_date(self, delta, action='created'):
+        if delta.seconds < 100:
+            return f'{"Создано" if action == "created" else "Изменено"} {delta.seconds if delta.seconds > 0 else 1} секунд назад'
+        if delta.seconds / 60 < 60:
+            return f'{"Создано" if action == "created" else "Изменено"} {round(delta.seconds / 60)} минут назад'
+        if delta.seconds / 3600 < 24:
+            return f'{"Создано" if action == "created" else "Изменено"} {round(delta.seconds / 3600)} часов назад'
+        return f'{"Создано" if action == "created" else "Изменено"} {delta.days} дней назад'
 
 
 class ArticleSerializer(serializers.ModelSerializer):

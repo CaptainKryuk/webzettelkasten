@@ -27,9 +27,11 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: left;
   line-height: 1.5;
+  overflow-y: hidden;
 }
 
 body {
-  margin: 0
+  margin: 0;
+  overflow-y: auto;
 }
 </style>

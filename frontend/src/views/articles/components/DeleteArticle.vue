@@ -9,7 +9,7 @@
         <p class="block_title">Удалить статью?</p>
         <div class="approve_buttons">
           <button class="btn success" @click="deleteArticle()">Удалить</button>
-          <button class="btn cancel">Отмена</button>
+          <button class="btn cancel" @click="closeBoard()">Отмена</button>
         </div>
       </div>
     </transition>

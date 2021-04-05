@@ -5,6 +5,7 @@
   white-space: nowrap
   text-overflow: ellipsis
   overflow: hidden
+  display: block
 
 
 @mixin centerY
@@ -30,11 +31,12 @@
 
 .appear-enter-from,
 .appear-leave-to
-    opacity: 0  
-
+    opacity: 0
+    
 .appear-enter-active,
 .appear-leave-active
   transition: opacity 0.5s ease
+
 
 
 .floating-enter-from,
@@ -54,7 +56,7 @@
 .floating-right-leave-active
   transform: translateX(100%)
 
-  
+
 .icon
   @include centerXY
   margin-right: 10px
@@ -193,6 +195,7 @@
 .user_avatar
   width: 45px
   height: 45px
+  cursor: pointer
 
   .avatar
     width: 100%
@@ -225,8 +228,8 @@
   .fold 
     position: absolute
     background: white
-    margin-top: 5px 
-    left: 0
+    margin-top: 15px 
+    right: 0
     border-radius: 5px
     z-index: 1
     border: 1px solid $line
@@ -254,3 +257,35 @@
 
     .option:hover
       background: #F5F5F5
+
+
+
+// tags
+.tag_list
+  display: flex
+  position: relative
+  flex-wrap: wrap
+
+  .tag
+    position: relative
+    margin-right: 10px
+    padding: 7px 10px 7px 30px
+    border: 1px solid $line
+    border-radius: 2px
+    cursor: pointer
+    transition: 0.3s
+    font-size: 14px
+    font-weight: 600
+    .pre_tag_block
+      left: 15px
+  .tag:hover
+    background: #f7f7f7
+
+.pre_tag_block
+  position: absolute
+  height: 18px
+  width: 3px
+  left: 15px
+  color: $description
+  margin-right: 10px
+  z-index: 2

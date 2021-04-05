@@ -15,7 +15,10 @@ export default createStore({
       username: 'mail',
 
       articles: [],
-      article: {}
+      article: {},
+
+      articles_search: '',
+      article_loading: false
     }
   },
 
@@ -29,24 +32,27 @@ export default createStore({
       })
     },
 
-    getArticles({ commit, state }) {
+    getArticles({ commit, state }, type) {
       // 
-      axios.get(`${state.server}articles?filter=last/`,
+      
+      axios.get(`${state.server}articles/${type === 'all' ? 'all_articles/' : ''}`,
         {headers: state.auth_headers})
-
         .then((response) => {
-          state.articles = response.data
+          commit('ASSIGN_ARTICLES', response.data)
         })
     },
 
     getArticle({ commit, state }, id) {
-      return new Promise((resolve, reject) => {
-        axios.get(`${state.server}articles/${id}/`,
-          {headers: state.auth_headers})
-          .then((response) => {
-            commit('ASSIGN_ARTICLE', response.data)
-          })
-      })
+      if (id) {
+        state.article_loading = true
+        return new Promise((resolve, reject) => {
+          axios.get(`${state.server}articles/${id}/`,
+            {headers: state.auth_headers})
+            .then((response) => {
+              commit('ASSIGN_ARTICLE', response.data)
+            })
+        })
+      }
     }
   },
 
@@ -57,6 +63,14 @@ export default createStore({
           state.articles.splice(index, 1)
         }
       })
+    },
+
+    ASSIGN_ARTICLES(state, data) {
+      state.articles = data
+    },
+
+    UPDATE_ARTICLES_SEARCH(state, value) {
+      state.articles_search = value
     },
 
     UPDATE_EMAIL(state, email) {
@@ -75,6 +89,9 @@ export default createStore({
     // * articles functions
     ASSIGN_ARTICLE(state, data) {
       state.article = data
+      setTimeout(() => {
+        state.article_loading = false
+      }, 100)
     },
     routeTo(state, link) {
       router.push(link)
@@ -87,7 +104,6 @@ export default createStore({
       } else {
         state.article.blocks.splice(args.index + 1, 0, args.data)
       }
-
     },
 
     DELETE_BLOCK(state, id) {

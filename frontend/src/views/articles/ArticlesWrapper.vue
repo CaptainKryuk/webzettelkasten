@@ -11,15 +11,20 @@
       <div class="top__menu">
         <!-- desctop elements -->
         <div class="search_menu">
-          <textinput v-model="search" placeholder="Поиск по заголовкам и тексту" icon="/static/img/search.svg"  />
+          <textinput placeholder="Поиск по заголовкам и тексту" 
+                     icon="/static/img/search.svg"
+                     @input="UPDATE_ARTICLES_SEARCH($event.target.value)"  />
         </div>
 
         <!-- user icon -->
+        <dropdown-object :custom="true" :options="[{name: 'Выйти', link: `/logout`}]">
         <div class="user_avatar">
           <div class="avatar">
             <span class="avatar__username">{{ username[0].toUpperCase() }} </span>
           </div>
         </div>
+        </dropdown-object>
+
 
         <!-- mobile button -->
         <div class="menu_icon">
@@ -47,7 +52,9 @@
 
     <div :class="['articles__content']">
       <div class="content__search">
-        <textinput v-model="search" placeholder="Поиск по заголовкам и тексту" icon="/static/img/search.svg" />
+        <textinput placeholder="Поиск по заголовкам и тексту" 
+                   icon="/static/img/search.svg" 
+                   @input="UPDATE_ARTICLES_SEARCH($event.target.value)"/>
       </div>
 
       <div class="pages_menu">
@@ -74,7 +81,6 @@ export default {
 
   data() {
     return {
-      search: '',
       show_menu: false,
       show: false,
       links: [
@@ -87,7 +93,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['username'])
+    ...mapState(['username', 'articles_search'])
   },
 
   mounted() {
@@ -95,7 +101,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['routeTo'])
+    ...mapMutations(['routeTo', 'UPDATE_ARTICLES_SEARCH'])
   }
   
 }

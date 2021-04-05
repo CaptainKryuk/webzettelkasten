@@ -1,6 +1,7 @@
 <template>
   <div class="detail_block">
-    <div class="detail_block__icon" :style="is_textarea_focus ? 'opacity: 1;' : ''">
+
+    <div class="detail_block__icon move" :style="is_textarea_focus ? 'opacity: 1;' : ''">
       <img src="@/assets/img/move.svg" />
     </div>
 
@@ -72,6 +73,7 @@
       <img src="@/assets/img/more.svg" />
     </div>
 
+    <!-- menu for block changing -->
     <transition name="appear" appear>
       <div class="popup_menu" v-if="is_open_menu">
         <div v-for="(item, index) in popup_menu" 
@@ -206,6 +208,8 @@ export default {
               textarea.style.height = '36px'
             } else if (this.block.block_type === 'title') {
               textarea.style.height = '39px'
+            } else if (this.block.block_type === 'code') {
+              textarea.style.height = '42px'
             }
           }
         }
@@ -327,6 +331,7 @@ export default {
             }
 
             else if (this.block.block_type === 'img') {
+              e.preventDefault()
               this.focusOnBlock('previous')
             }
 
@@ -376,6 +381,7 @@ export default {
                 this.focusOnBlock('next')
               }
             } else if (this.block.block_type === 'img') {
+              e.preventDefault()
               this.focusOnBlock('next')
             }
           }
@@ -420,6 +426,11 @@ export default {
 
       else if (new_type === 'img') {
         this.block.inner_text = ''
+        let blocks = this.article.blocks
+        // * if we have only 1 block or img block in last position - create new text block after that
+        if (blocks.length === 1 || this.block.id === blocks[blocks.length-1].id) {
+          this.createBlock()
+        }
         this.getCurrentInput().focus()
       }
 
@@ -490,6 +501,7 @@ export default {
         if (this.block.block_type === 'list' || this.block.block_type === 'img') {
           this.changeBlock(e, 'text')
         }
+        e.preventDefault()
         this.focusOnTitle()
       }
 
@@ -554,7 +566,6 @@ export default {
             resolve()
           })
       })
-
     },
 
 
@@ -604,6 +615,10 @@ export default {
       }
 
     },
+
+    updateArticle() {
+      console.log('update')
+    }
   }
 }
 </script>

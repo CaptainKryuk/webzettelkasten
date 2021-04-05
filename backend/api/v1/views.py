@@ -11,6 +11,7 @@ from rest_framework_jwt.settings import api_settings
 from users.models import User
 from . import serializers
 from django.contrib.auth import login, authenticate
+from django.db.models import Q
 
 
 class SecurityViewSet(viewsets.ViewSet):
@@ -86,16 +87,19 @@ class ArticleViewSet(SecurityViewSet):
 
     def list(self, request):
         """
-        * get all articles
+        * get recent articles
         """
-        # is_last = self.request.query_params.get('filter')
-        # if is_last:
-        #     articles = Article.objects.filter(user=request.user).order_by('-modified')
-        # else:
-        articles = Article.objects.filter(user=request.user)
-        serialized_articles = serializers.ArticleSerializer(articles, many=True)
+        articles = Article.objects.filter(user=request.user).order_by('-modified')
+        serialized_articles = serializers.ArticlesListSerializer(articles, many=True)
         return Response(serialized_articles.data)
 
+
+    @action(detail=False, methods=['get'])
+    def all_articles(self, request):
+        articles = Article.objects.filter(user=request.user).order_by('order_number')
+        serialized_articles = serializers.ArticlesListSerializer(articles, many=True)
+        return Response(serialized_articles.data)
+    
 
     def create(self, request):
         """
@@ -108,25 +112,80 @@ class ArticleViewSet(SecurityViewSet):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    
-    def retrieve(self, request, pk):
+
+    def update(self, request, pk=None):
+        """
+        update article
+        """
+        article = Article.objects.filter(id=pk, user=request.user).first()
+        if article:
+            if 'order_number' in request.data and request.data['order_number'] != article.order_number:
+                data_num = request.data['order_number']
+                ar_num = article.order_number
+
+                if int(data_num) > int(ar_num):
+                    position_holders = Article.objects.filter(order_number__lte=data_num, order_number__gte=article.order_number)
+                    for a in position_holders:
+                        a.order_number -= 1
+                        a.save()
+                elif int(data_num) < int(ar_num):
+                    position_holders = Article.objects.filter(order_number__gte=data_num, order_number__lte=article.order_number)
+                    for a in position_holders:
+                        a.order_number += 1
+                        a.save()
+
+                article.order_number = data_num
+                article.save()
+                return Response('success')
+
+            serializer = serializers.ArticleSerializer(article, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response('no access', status=status.HTTP_403_FORBIDDEN)
+        
+
+    def retrieve(self, request, pk=None):
         """
         get detail article
         """
-        article = Article.objects.filter(id=pk).first()
+        article = Article.objects.filter(id=pk, user=request.user).first()
         serialized_data = serializers.ArticleSerializer(article)
         return Response(serialized_data.data)
 
 
-    def destroy(self, request, pk):
+    def destroy(self, request, pk=None):
         """
         delete article
         """
-        article = Article.objects.filter(id=pk).first()
+        article = Article.objects.filter(id=pk, user=request.user).first()
         if article:
             article.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response('no article', status=status.HTTP_400_BAD_REQUEST)
+
+    
+    @action(detail=True, methods=['post'])
+    def add_tag(self, request, pk=None):
+        article = Article.objects.filter(id=pk).first()
+        if article:
+            article.add_tag(name=request.data['name'], color=request.data['color'])
+            article.save()
+            tags = [{'name': tag.name, 'color': tag.color} for tag in article.tags.all()]
+            return Response(tags)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+    @action(detail=True, methods=['put'])
+    def delete_tag(self, request, pk=None):
+        article = Article.objects.filter(id=pk, user=request.user).first()
+        if article:
+            article.remove_tag(request.data['name'])
+            article.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
 
 
 class ContentBlockViewSet(SecurityViewSet):
@@ -148,6 +207,27 @@ class ContentBlockViewSet(SecurityViewSet):
         """
         block = ContentBlock.objects.filter(id=pk).first()
         if block and block.article.user.id == request.user.id:
+
+            if 'order_number' in request.data and request.data['order_number'] != block.order_number:
+                data_num = request.data['order_number']
+                b_num = block.order_number
+
+                if int(data_num) > int(b_num):
+                    position_holders = ContentBlock.objects.filter(order_number__lte=data_num, order_number__gte=block.order_number)
+                    for a in position_holders:
+                        a.order_number -= 1
+                        a.save()
+                elif int(data_num) < int(b_num):
+                    position_holders = ContentBlock.objects.filter(order_number__gte=data_num, order_number__lte=block.order_number)
+                    for a in position_holders:
+                        a.order_number += 1
+                        a.save()
+
+                block.order_number = data_num
+                block.save()
+                return Response('success')
+
+
             serializer = serializers.ContentBlockSerializer(block, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()

@@ -29,7 +29,6 @@ class Article(AbstractDateTimeModel):
     user = models.ForeignKey('users.User', verbose_name="Пользователь, написавший статью", on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ('order_number', '-created')
         verbose_name = "Статья"
         verbose_name_plural = "Все статьи"
 
@@ -38,9 +37,11 @@ class Article(AbstractDateTimeModel):
         self.slug = slugify(self.title)
         self.base_name = '-'.join([re.sub(r'\W', r'-', self.title), str(now.day), str(now.month), str(now.year)])
 
+        flag = False
         if not self.pk:
+            flag = True
             # set order number
-            last_article = Article.objects.filter(user=self.user).last()
+            last_article = Article.objects.filter(user=self.user).order_by('order_number').last()
             if last_article:
                 self.order_number = last_article.order_number + 1
             else:
@@ -50,7 +51,8 @@ class Article(AbstractDateTimeModel):
 
         # need ready instance to create new block
         # create detaul text block
-        block = ContentBlock.objects.create(article=self)
+        if flag:
+            block = ContentBlock.objects.create(article=self)
 
 
     def update_tags(self, new_tags: list):
@@ -68,14 +70,14 @@ class Article(AbstractDateTimeModel):
         for tag in tag_list:
             self.add_tag(tag)
 
-    def add_tag(self, name: str):
+    def add_tag(self, name: str, color: str):
         exist_tag = Tag.objects.filter(name=name).first()
         if exist_tag:
             self.tags.add(exist_tag)
             return
         
         # create new tag
-        new_tag = Tag(name=name)
+        new_tag = Tag(name=name, color=color)
         new_tag.save()
         self.tags.add(new_tag)
     
@@ -149,14 +151,9 @@ class ContentBlock(models.Model):
                     self.order_number = last_block.order_number + 1
                 else:
                     self.order_number = 0
-            if self.order_number:
-                # find blocks with greater order_number
-                blocks = ContentBlock.objects.filter(order_number__gte=self.order_number)
-                for b in blocks:
-                    b.order_number += 1
-                    b.save()
 
         super(ContentBlock, self).save(*args, **kwargs)
+
 
 
 class BlockImage(AbstractDateTimeModel):
@@ -240,37 +237,24 @@ class Tag(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk:
-            colors = [
-                '#CFC5E7',
-                '#DDC0E5',
-                '#E6CAEB',
-                '#EBDEF0',
-                '#E0D7F0',
-                '#C6CCE9',
-                '#D1DEE8',
-                '#BDD7F1',
-                '#C9E5FC',
-                '#DFF0FD',
-                '#BDE3DB',
-                '#C0EBE2',
-                '#D8F3EE',
-                '#C0E1CE',
-                '#C4F0D6',
-                '#DBF6E7',
-                '#DAD6BD',
-                '#E2E2C2',
-                '#EDEFC7',
-                '#DBB9CB',
-                '#EDBCCF',
-                '#F6C4D4',
-                '#FAD1DF',
-                '#F6D7D8',
-                '#F7C6C6',
-                '#FCCFC3',
-                '#FEDCD3',
-                '#FCD8C2',
-                '#FFE3C4',
-                '#FFF3C9',
-            ]
-            self.color = random.choice(colors)
+            if not self.color:
+                colors = [
+                    '#F44336',
+                    '#E91E63',
+                    '#9C27B0',
+                    '#673AB7',
+                    '#3F51B5',
+                    '#2196F3',
+                    '#00BCD4',
+                    '#009688',
+                    '#4CAF50',
+                    '#CDDC39',
+                    '#FFEB3B',
+                    '#FF9800',
+                    '#FF5722',
+                    '#795548',
+                    '#9E9E9E',
+                    '#607D8B'
+                ]
+                self.color = random.choice(colors)
         super(Tag, self).save(*args, **kwargs)
