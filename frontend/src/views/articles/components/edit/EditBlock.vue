@@ -22,7 +22,8 @@
                 @focus="is_textarea_focus = true"
                 @blur="is_textarea_focus = false"
                 @keydown.up="handleInput"
-                @keydown.down="handleInput">
+                @keydown.down="handleInput"
+                @click="focusOnInput">
                 </textarea>
       
       <div class="row_numbered" v-if="block.block_type === 'code'">
@@ -178,7 +179,6 @@ export default {
 
   created() {
     this.debouncedUpdateBlock = _.debounce(this.updateBlock, 500)
-    window.addEventListener("resize", this.myEventHandler);
   },
 
   mounted() {
@@ -186,18 +186,12 @@ export default {
     this.setupTextarea()
   },
 
-  unmounted() {
-    window.removeEventListener("resize", this.myEventHandler);
-  },
-
   methods: {
-  myEventHandler(e) {
-    // your code for handling resize...
-    e.preventDefault()
-  },
-    test(e) {
-      this.block.inner_text = e.target.innerText
+    myEventHandler(e) {
+      // your code for handling resize...
+      e.preventDefault()
     },
+
 
     ...mapMutations(['ADD_NEW_BLOCK', 'DELETE_BLOCK',]),
 
@@ -680,8 +674,11 @@ export default {
 
     },
 
-    updateArticle() {
-      console.log('update')
+    focusOnInput(e) {
+      // * need for ios apple devices
+      if (window.screen.width < 1200) {
+        e.target.focus()
+      }
     }
   }
 }
