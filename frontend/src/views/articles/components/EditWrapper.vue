@@ -1,7 +1,7 @@
 <template>
 <transition name="appear" appear>
   <div :class="['edit_article_block', no_content ? 'no_content': '']" 
-       v-if="Object.keys(article).length">
+       v-if="!article_loading && Object.keys(article).length">
     <div class="block_title">
 
       <!-- // * add tag -->
@@ -9,6 +9,7 @@
 
       <!-- // * change title -->
       <div class="title_input">
+        <textarea v-model="article.title"></textarea>
         <textarea v-model="article.title" 
                   ref='title_input'
                   @input="mixin_autoResize_resize" 
@@ -19,7 +20,7 @@
                   @keydown.down="endEditTitle"
                   @focus="is_title_focussed = true"
                   @blur="is_title_focussed = false"
-                   />
+                  rows="1" />
       </div>
 
     </div>
@@ -113,14 +114,13 @@ export default {
 
   methods: {
     setupTitle() {
-      console.log('setup title')
-      // setTimeout(() => {
-      //   let input = this.$refs.title_input
-      //   if (input) {
-      //     input.style.height = 'auto'
-      //     input.style.height = `${input.scrollHeight}px`
-      //   }
-      // }, 200)
+      setTimeout(() => {
+        let input = this.$refs.title_input
+        if (input) {
+          input.style.height = 'auto'
+          input.style.height = `${input.scrollHeight}px`
+        }
+      }, 200)
     },
 
     focusOnBlock(type='last') {
