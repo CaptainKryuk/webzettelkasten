@@ -33,8 +33,6 @@ export default createStore({
     },
 
     getArticles({ commit, state }, type) {
-      // 
-      
       axios.get(`${state.server}articles/${type === 'all' ? 'all_articles/' : ''}`,
         {headers: state.auth_headers})
         .then((response) => {

@@ -99,6 +99,23 @@ class ArticleViewSet(SecurityViewSet):
         articles = Article.objects.filter(user=request.user).order_by('order_number')
         serialized_articles = serializers.ArticlesListSerializer(articles, many=True)
         return Response(serialized_articles.data)
+        
+
+    @action(detail=False, methods=['get'])
+    def tags_articles(self, request):
+        articles = Article.objects.filter(user=request.user)
+        tags_dict = {}
+        for a in articles:
+            for tag in a.tags.all():
+                if tag.name in tags_dict:
+                    serializer = serializers.ArticlesListSerializer(a)
+                    tags_dict[tag.name].append(serializer.data)
+                else:
+                    serializer = serializers.ArticlesListSerializer(a)
+                    tags_dict[tag.name] = [serializer.data]
+
+        return Response(tags_dict)
+
     
 
     def create(self, request):

@@ -178,6 +178,7 @@ export default {
 
   created() {
     this.debouncedUpdateBlock = _.debounce(this.updateBlock, 500)
+    window.addEventListener("resize", this.myEventHandler);
   },
 
   mounted() {
@@ -185,8 +186,15 @@ export default {
     this.setupTextarea()
   },
 
+  unmounted() {
+    window.removeEventListener("resize", this.myEventHandler);
+  },
 
   methods: {
+  myEventHandler(e) {
+    // your code for handling resize...
+    e.preventDefault()
+  },
     test(e) {
       this.block.inner_text = e.target.innerText
     },
@@ -270,6 +278,28 @@ export default {
           else if (this.block.block_type === 'img') {
             e.preventDefault()
             this.createOrFocus(e)
+          } 
+
+          else {
+            e.preventDefault()
+            let input = this.getCurrentInput()
+            input.blur()
+            let cursor = input.selectionEnd
+            let text_before = this.block.inner_text.slice(0, cursor)
+            let text_after = this.block.inner_text.slice(cursor)
+            let split_text = text_before.split(/\n/)
+            let blank_space = split_text[split_text.length-1].match(/^ */)[0]
+            let new_string = text_before + '\n' + blank_space + text_after
+            this.block.inner_text = new_string
+            // console.log(text_before, new_string)
+
+
+            setTimeout(() => {
+              input.focus()
+              input.selectionStart = text_before.length + blank_space.length + 1
+              input.selectionEnd = text_before.length + blank_space.length + 1
+              this.mixin_autoResize_resize(e)
+            })
           }
         }
       } 
@@ -594,8 +624,42 @@ export default {
     },
 
     addTabSpace(e) {
-      console.log('tab')
       e.preventDefault()
+      let input = this.getCurrentInput()
+      let start = input.selectionStart
+      let end = input.selectionEnd
+      let text = this.block.inner_text
+      if (start === end) {
+        input.blur()
+        let before = text.slice(0, start)
+        let after = text.slice(start)
+        this.block.inner_text = before + '  ' + after
+        setTimeout(() => {
+          input.focus()
+          input.selectionStart = before.length + 2
+          input.selectionEnd = before.length + 2
+        })
+      } else {
+        input.blur()
+        let text_inside = this.block.inner_text.slice(start, end)
+        let split_inside_text = text_inside.split(/\n/)
+        let new_string = '';
+        split_inside_text.forEach((text, index) => {
+          new_string += '  ' + text + (index !== split_inside_text.length - 1 ? '\n' : '')
+        })
+        this.block.inner_text = this.block.inner_text.replace(text_inside, new_string)
+        // console.log(split_inside_text)
+        setTimeout(() => {
+          input.focus()
+          let additional_space = '';
+          split_inside_text.forEach((space) => {
+            additional_space += '  '
+          })
+          console.log(additional_space)
+          input.selectionStart = end + additional_space.length
+          input.selectionEnd = end + additional_space.length
+        })
+      }
     },
 
     closeLangs() {
