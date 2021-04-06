@@ -13,7 +13,7 @@
                 v-model="block.inner_text"
                 rows="1"
                 :placeholder="getBlockPlaceholder()"
-                @input="mixin_autoResize_resize"
+                
                 @keydown.tab.exact="addTabSpace"
                 @keydown.enter.exact="handleInput"
                 @keydown.enter.shift="createBlock($event)"
