@@ -3,11 +3,11 @@
   <div :class="['edit_article_block', no_content ? 'no_content': '']" 
        v-if="!article_loading && Object.keys(article).length">
     
-    <textarea v-model="test"></textarea>
+    <!-- <textarea v-model="test"></textarea> -->
     <div class="block_title">
 
       <!-- // * add tag -->
-      <!-- <tag-list :article="article" @updateTags="article.tags = $event"></tag-list> -->
+      <tag-list :article="article" @updateTags="article.tags = $event"></tag-list>
 
       <!-- // * change title -->
       <div class="title_input">

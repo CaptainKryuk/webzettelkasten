@@ -68,7 +68,7 @@
         <router-view></router-view>
       </div>
 
-      <textarea v-model="test"></textarea>
+      <!-- <textarea v-model="test"></textarea> -->
 
     </div>
   </div>
