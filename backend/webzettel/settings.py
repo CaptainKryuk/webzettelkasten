@@ -31,7 +31,7 @@ SECRET_KEY = env('SECRET_URL', default='1488')
 DEBUG = env.bool('DJANGO_DEBUG', default=False) 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
-ALLOWED_HOSTS = ['127.0.0.1', '213.108.252.201']
+ALLOWED_HOSTS = ['127.0.0.1', '213.108.252.201', 'api.webzettel.com']
 
 
 # Application definition
