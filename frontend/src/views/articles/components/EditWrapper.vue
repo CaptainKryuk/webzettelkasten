@@ -2,14 +2,15 @@
 <transition name="appear" appear>
   <div :class="['edit_article_block', no_content ? 'no_content': '']" 
        v-if="!article_loading && Object.keys(article).length">
+    
+    <textarea v-model="test"></textarea>
     <div class="block_title">
 
       <!-- // * add tag -->
-      <tag-list :article="article" @updateTags="article.tags = $event"></tag-list>
+      <!-- <tag-list :article="article" @updateTags="article.tags = $event"></tag-list> -->
 
       <!-- // * change title -->
       <div class="title_input">
-        <textarea v-model="article.title"></textarea>
         <textarea v-model="article.title" 
                   ref='title_input'
                   @input="mixin_autoResize_resize" 
@@ -64,7 +65,8 @@ export default {
   data() {
     return {
       selected_block: null,
-      is_title_focussed: false
+      is_title_focussed: false,
+      test: ''
     }
   },
 
