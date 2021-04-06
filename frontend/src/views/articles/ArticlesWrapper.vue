@@ -67,6 +67,9 @@
       <div class="articles">
         <router-view></router-view>
       </div>
+
+      <textarea v-model="test"></textarea>
+
     </div>
   </div>
 </transition>
@@ -88,7 +91,8 @@ export default {
         {filter: 'articles', url: '/mind/articles', name: 'Все'},
         {filter: 'tags', url: '/mind/tags', name: 'Тэги'},
         {filter: 'links', url: '/mind/links', name: 'Ссылки'}
-      ]
+      ],
+      test: ''
     }
   },
 
