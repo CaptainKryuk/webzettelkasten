@@ -91,6 +91,10 @@ const routes = [
     path: "/logout", 
     component: () => import("@/views/account/Logout.vue") 
   },
+  {
+    path: "/test",
+    component: () => import("@/views/Test.vue")
+  }
 ]
 
 const router = createRouter({

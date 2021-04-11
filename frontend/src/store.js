@@ -12,7 +12,7 @@ export default createStore({
       id: localStorage.getItem('id'),
       auth_headers: {Authorization: 'JWT ' + localStorage.getItem("token")},
 
-      username: 'mail',
+      username: localStorage.getItem('username'),
 
       articles: [],
       article: {},
@@ -75,6 +75,10 @@ export default createStore({
       localStorage.setItem('email', email)
       state.email = email
     },
+    UPDATE_USERNAME(state, username) {
+      localStorage.setItem('username', username)
+      state.username = username
+    },
     UPDATE_ID(state, id) {
       localStorage.setItem('id', id)
       state.id = id
@@ -100,7 +104,19 @@ export default createStore({
       if (args.index === state.article.blocks.length - 1) {
         state.article.blocks.push(args.data)
       } else {
+        // * block was added to the center
         state.article.blocks.splice(args.index + 1, 0, args.data)
+        
+        state.article.blocks.forEach((block, index) => {
+          let increase_next_blocks = false;
+          if (block.order_number === args.data.order_number) {
+            increase_next_blocks = true
+          }
+
+          if ((block.order_number >= args.data.order_number) && (block.id !== args.data.id) && increase_next_blocks) {
+            block.order_number += 1
+          }
+        })
       }
     },
 

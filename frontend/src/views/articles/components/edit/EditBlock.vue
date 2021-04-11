@@ -7,6 +7,7 @@
 
     <!-- editor -->
     <label class="block_input" :for="`input_${random_number}`" >
+      <!-- num: {{ block.order_number }} -->
       <textarea v-if="block.block_type === 'text' || block.block_type === 'title' || block.block_type === 'code'"
                 :class="block_classes"
                 :id="`input_${random_number}`"
@@ -71,7 +72,15 @@
     </label>
 
     <div class="detail_block__icon">
-      <img src="@/assets/img/more.svg" />
+      <div class="dropdown-object" v-click-outside="closeMenu">
+        <img class="icon" src="@/assets/img/more.svg" @click="show_fold = true" />
+
+        <div v-if="show_fold" class="fold">
+          <div class="option" v-for="(option, index) in options" :key="index" @click="option.func">
+            <p class="option__text">{{ option.name }}</p>
+          </div>      
+        </div>
+      </div>
     </div>
 
     <!-- menu for block changing -->
@@ -94,6 +103,13 @@
       </div>
     </transition>
 
+  <!-- modal window for approving -->
+  <modal-window title="Удаление блока"
+                description="Вы уверены, что хотите удалить данный блок?"
+                button_name="Удалить"
+                :show="approve_delete"
+                @close="approve_delete = false"
+                @submit="deleteBlock"></modal-window>
   </div>
 </template>
 
@@ -104,6 +120,7 @@ import axios from 'axios'
 import { mapMutations, mapState } from 'vuex';
 import List from './components/List.vue'
 import ListFunctionsMixinVue from './mixins/ListFunctionsMixin.vue';
+import BlockDropdownMenuMixin from './mixins/BlockDropdownMenuMixin.vue'
 import Img from './components/Img.vue'
 
 export default {
@@ -111,11 +128,15 @@ export default {
 
   props: ['block', 'index'],
 
-  mixins: [mixinAutoResize, ListFunctionsMixinVue],
+  mixins: [
+    mixinAutoResize, 
+    ListFunctionsMixinVue,
+    BlockDropdownMenuMixin
+  ],
 
   components: {
     'list-com': List,
-    'img-com': Img
+    'img-com': Img,
   },
 
   data() {
@@ -418,7 +439,12 @@ export default {
     },
 
     changeBlock(e, new_type) {
-      e.preventDefault()
+      try {
+        e.preventDefault()
+      } catch {
+        
+      }
+      
       this.block.block_type = new_type
       if (new_type === 'title') {
         this.block.inner_text = ''
@@ -519,13 +545,21 @@ export default {
           {headers: this.auth_headers})
           .then((response) => {
             this.focusOnBlock()
+            this.approve_delete = false
             this.DELETE_BLOCK(this.block.id)
           })
       } else {
+        this.approve_delete = false
+        this.block.inner_text = ''
         if (this.block.block_type === 'list' || this.block.block_type === 'img') {
           this.changeBlock(e, 'text')
         }
-        e.preventDefault()
+        try {
+          e.preventDefault()
+        } catch {
+          
+        }
+
         this.focusOnTitle()
       }
 

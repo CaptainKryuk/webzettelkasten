@@ -34,7 +34,10 @@ class UserViewSet(viewsets.ViewSet):
 
             if auth['token']:
                 # authenticate user
-                return Response({'email': user_data.get('email'), 'id': user_data.get('id'), 'token': auth.get('token')})
+                return Response({'email': user_data.get('email'), 
+                                 'id': user_data.get('id'), 
+                                 'token': auth.get('token'),
+                                 'username': user_data.get('username')})
             return Response("Ошибка при создании пользователя", status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -49,7 +52,10 @@ class UserViewSet(viewsets.ViewSet):
 
         if auth['token']:
             # authenticate user
-            return Response({'email': auth['user'].get('email'), 'id': auth['user'].get('id'), 'token': auth.get('token')})
+            return Response({'email': auth['user'].get('email'), 
+                             'id': auth['user'].get('id'), 
+                             'token': auth.get('token'),
+                             'username': auth['user'].get('username')})
         return Response("Пользователь с такой электронной почтой или паролем не найден", status=status.HTTP_400_BAD_REQUEST)
 
 

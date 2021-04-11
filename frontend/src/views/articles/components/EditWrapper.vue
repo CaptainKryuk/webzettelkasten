@@ -66,7 +66,7 @@ export default {
     return {
       selected_block: null,
       is_title_focussed: false,
-      test: ''
+      test: '',
     }
   },
 
@@ -74,6 +74,7 @@ export default {
     'article.title': {
       handler() {
         this.debouncedUpdateArticle()
+        this.debouncedUpdateArticleInList()
       }
     },
 
@@ -85,7 +86,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['server', 'auth_headers', 'article', 'article_loading']),
+    ...mapState(['server', 'auth_headers', 'article', 'articles', 'article_loading']),
 
     no_content() {
       if ((this.article.title && this.article.title.length) 
@@ -104,6 +105,7 @@ export default {
 
   created() {
     this.debouncedUpdateArticle = _.debounce(this.updateArticle, 500)
+    this.debouncedUpdateArticleInList =  _.debounce(this.updateArticleInList, 1000)
   },
 
   mounted() {
@@ -111,7 +113,6 @@ export default {
     setTimeout(() => {
       this.setupDragAndDrop('article_blocks', 'detail_block')
     }, 300)
-    
   },
 
   methods: {
@@ -121,6 +122,9 @@ export default {
         if (input) {
           input.style.height = 'auto'
           input.style.height = `${input.scrollHeight}px`
+        }
+        if (!this.article.title.length) {
+          input.focus()
         }
       }, 200)
     },
@@ -155,6 +159,14 @@ export default {
       this.$axios.put(`${this.server}articles/${this.$route.params.id}/`,
         this.article,
         {headers: this.auth_headers})
+    },
+
+    updateArticleInList() {
+      this.articles.forEach((article, index) => {
+        if (article.id === this.article.id) {
+          article.title = this.article.title
+        }
+      })
     },
 
     updateMovedObject() {

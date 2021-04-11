@@ -9,6 +9,7 @@ export default {
   created () {
     localStorage.clear()
     this.$router.push("/")
+    this.$store.commit('UPDATE_AUTH_HEADERS', '123')
   }
 }
 </script>

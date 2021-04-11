@@ -1,18 +1,22 @@
 <template>
-  <div class="modal" v-if="show">
-    <div class="shadow" @click="$emit('close')"></div>
-    <div class="modal__window">
-      <img src="@/assets/img/close.svg" class="close_icon" @click="$emit('close')" />
 
-      <h1>{{ title }}</h1>
-      <p class="description">{{ description }}</p>
+  <transition name="appear" appear>
+    <div class="modal" v-if="show">
+      <div class="shadow" @click="$emit('close')"></div>
+      <div class="modal__window">
+        <img src="@/assets/img/close.svg" class="close_icon" @click="$emit('close')" />
 
-      <div class="buttons">
-        <button class="transparent" @click="$emit('close')">Отменить</button>
-        <button class="success" @click="$emit('submit')">{{ button_name }}</button>
+        <h1>{{ title }}</h1>
+        <p class="description">{{ description }}</p>
+
+        <div class="buttons">
+          <button class="transparent" @click="$emit('close')">Отменить</button>
+          <button class="success" @click="$emit('submit')">{{ button_name }}</button>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
+
 </template>
 
 <script>
@@ -34,18 +38,6 @@ export default {
     button_name: String,
     show: Boolean
   },
-  
-  data() {
-    return {
-
-    }
-  },
-
-  mounted() {
-  },
-
-  methods: {
-  }
 }
 </script>
 

@@ -132,8 +132,6 @@ class ContentBlock(models.Model):
     inner_text = models.TextField("HTML текст, который будет обрабатываться", blank=True) 
     
 
-
-
     class Meta:
         ordering = ('order_number', )
 
@@ -151,6 +149,14 @@ class ContentBlock(models.Model):
                     self.order_number = last_block.order_number + 1
                 else:
                     self.order_number = 0
+            else:
+                # * when block added to the center we must get all blocks which have order_number > then current and increase it by 1
+                current_block = ContentBlock.objects.filter(article=self.article, order_number=self.order_number).first()
+                if current_block:
+                    shift_blocks = ContentBlock.objects.filter(order_number__gte=self.order_number)
+                    for block in shift_blocks:
+                        block.order_number += 1
+                        block.save()
 
         super(ContentBlock, self).save(*args, **kwargs)
 

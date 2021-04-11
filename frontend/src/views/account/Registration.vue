@@ -49,7 +49,7 @@ export default {
   },
 
   methods: {
-    ...mapMutations(['UPDATE_EMAIL', 'UPDATE_ID', 'UPDATE_AUTH_HEADERS']),
+    ...mapMutations(['UPDATE_EMAIL', 'UPDATE_ID', 'UPDATE_AUTH_HEADERS', 'UPDATE_USERNAME']),
 
     successForm() {
       this.error = ''
@@ -59,6 +59,7 @@ export default {
           this.UPDATE_EMAIL(response.data.email)
           this.UPDATE_ID(response.data.id)
           this.UPDATE_AUTH_HEADERS(response.data.token)
+          this.UPDATE_USERNAME(response.data.username)
           this.$router.push('/mind')
         })
         .catch((error) => {
