@@ -88,6 +88,10 @@ class Article(AbstractDateTimeModel):
             self.tags.remove(tag.id)
 
 
+    def __str__(self) -> str:
+        return self.title
+
+
 
 class ContentBlock(models.Model):
     """
