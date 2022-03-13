@@ -1,45 +1,43 @@
 <template>
-  
+
+    <Markdown :source="source" />
+
+    <textarea @input="input" />
 </template>
 
 <script>
+import Markdown from 'vue3-markdown-it';
+import { mapState } from 'vuex';
+import store from '../store'
+
 export default {
   name: "Test",
 
+  components: {
+    Markdown
+  },
 
+  data() {
+    return {
+      source: '# Hello World!'
+    }
+  },
+
+  computed: {
+    ...mapState(['server'])
+  },
+  
   mounted() {
-    this.test()
+    console.log(this.server)
+    console.log(store)
   },
 
   methods: {
-    test() {
-      const getPrice = new Promise(async (resolve, reject) => {
-        // let fetchList = ['fetch', 'fetch2']
-        // let dataItems = [];
-
-        // fetchList.forEach(item => {
-        //    this.fetch(item).then((data) => dataItems.push(data))
-        // });
-
-        for (let i=0; i<fetchList.length; i++) {
-          await fetch(fetchList[i]).then((data) => dataItems.push(data))
-        }
-        resolve(dataItems)
-      })
-
-      getPrice.then((data) => {
-        console.log(data)
-      })
-    },
-
-    fetch(item) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve({'js': 'json'})
-        }, 500)
-      })
+    input(e) {
+      e.preventDefault()
+      e.stopPropagation()
+      this.source += e.target.value
     }
   }
 }
 </script>
-

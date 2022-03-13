@@ -1,6 +1,7 @@
 <template>
   <div :id="`input_${id_number}`"
-       class="textarea img_textarea">
+       class="textarea img_textarea"
+       ref="input">
 
     <label v-if="block.images && !block.images.length" class="file_label">
       Выберите картинку для загрузки
@@ -8,6 +9,7 @@
     </label>
 
     <div class="img_area" @click="selectImage">
+
       <img v-if="block.images && block.images[0]" 
            :src="`${media_server}${block.images[0].file}`" 
            :alt="block.images[0].filename"
@@ -16,30 +18,34 @@
       <textarea @focus="is_focussed = true"
                 @blur="is_focussed = false"
                 maxlength="1"
-                @keydown.enter.exact="$emit('keydown_enter_exact', $event)"
-                @keydown.enter.shift="$emit('keydown_enter_shift', $event)"
-                @keydown.enter.ctrl="$emit('keydown_enter_ctrl', $event)"
-                @keydown.backspace="$emit('keydown_backspace', $event)"
-                @keydown.up="$emit('keydown_up', $event)"
-                @keydown.down="$emit('keydown_down', $event)"></textarea>
+                @update="block.images = $event"
+                @keydown.enter.exact="handleInput"
+                @keydown.enter.shift="createBlock($event)"
+                @keydown.enter.ctrl="createBlock($event)"
+                @keydown.backspace="handleInput"
+                @keydown.up="handleInput"
+                @keydown.down="handleInput"></textarea>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import inputComponentsMixin from '../mixins/InputComponentsMixin.vue'
+
 export default {
   name: "img-mixin",
-  props: ['id_number', 'block', 'index'],
-  emits: ['update',
-          'keydown_enter_exact', 
-          'keydown_enter_shift', 
-          'keydown_enter_ctrl',
-          'keydown_backspace', 
-          'keydown_up', 
-          'keydown_down',
-          'focus',
-          'blur',],
+
+  mixins: [inputComponentsMixin],
+
+  props: {
+    'id_number': String | Number, 
+    'block': Object,
+    'index': Number,
+
+  },
+  
+  emits: ['update'],
 
   data() {
     return {
@@ -54,7 +60,6 @@ export default {
 
   methods: {
     focus(e) {
-      console.log('focus')
     },
 
     async uploadFile(e) {

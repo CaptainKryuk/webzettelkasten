@@ -10,7 +10,7 @@ export default {
       let range = document.createRange()
       let sel = window.getSelection()
 
-      let li = this.getListLi(input)
+      let li = this.getLiElements(input)
       if (where === 'end') {
         range.setStart(li[li.length-1], 1)
         range.collapse(true)
@@ -19,12 +19,12 @@ export default {
         range.collapse(true)
       }
 
-
       sel.removeAllRanges()
       sel.addRange(range)
     },
 
     getCaretCharacterOffsetWithin(element) {
+      // * Получает [позиция курсора, Текст на этой строке]
       var caretOffset = 0;
       let container;
       var doc = element.ownerDocument || element.document;
@@ -50,18 +50,23 @@ export default {
       return [caretOffset, container.nodeValue || container.innerText.length]; // cursor index, string value
     },
 
-    getListLi(input) {
+    getLiElements(input) {
+      // * получить все элементы li
       let ul = input.childNodes[0]
       if (ul) {
-        let li = ul.childNodes
-        return li
+        return ul.childNodes
       }
       return []
     },
 
+    getElementsInLine(last_line, line_length) {
+      return Math.floor(((last_line.length / line_length) - Math.floor(last_line.length / line_length)) * line_length)
+    },
+
     getListLength(input) {
+      // * Получить длину всех элементов всех li в списке
       let li_text = '';
-      let li = this.getListLi(input)
+      let li = this.getLiElements(input)
       li.forEach(element => {
         li_text += element.innerText
       });

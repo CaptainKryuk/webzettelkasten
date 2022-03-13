@@ -26,16 +26,7 @@
 
     </div>
 
-    <div class="article_blocks">
-      <editor v-for="(block, index) in article.blocks" 
-              :key="block.id" 
-              :block="block" 
-              :index="index"
-              :drag_index="block.order_number"
-              :drag_id="block.id"
-              class='detail_block_wrapper'></editor>
-    </div>
-
+    <article-blocks :key="component_key" @render="forceRendered"></article-blocks>
     <!-- this label fit bottom of page and when click on this area last input in article blocks makes focussed  -->
     <label class="focus_label" @click="focusOnBlock()"> </label>
 
@@ -51,6 +42,7 @@ import EditBlock from './edit/EditBlock'
 import ListFunctionsMixinVue from './edit/mixins/ListFunctionsMixin.vue'
 import TagList from './TagList'
 import DragAndDropMixin from './edit/mixins/DragAndDropMixin'
+import ArticleBlocks from './edit/ArticleBlocks.vue'
 
 export default {
   name: 'EditWrapper',
@@ -59,7 +51,8 @@ export default {
 
   components: {
     'editor': EditBlock,
-    'tag-list': TagList
+    'tag-list': TagList,
+    'article-blocks': ArticleBlocks
   },
 
   data() {
@@ -67,6 +60,7 @@ export default {
       selected_block: null,
       is_title_focussed: false,
       test: '',
+      component_key: 0
     }
   },
 
@@ -110,12 +104,13 @@ export default {
 
   mounted() {
     this.setupTitle()
-    setTimeout(() => {
-      this.setupDragAndDrop('article_blocks', 'detail_block')
-    }, 300)
   },
 
   methods: {
+    forceRendered() {
+      this.component_key += 1
+    },
+
     setupTitle() {
       setTimeout(() => {
         let input = this.$refs.title_input
@@ -126,7 +121,7 @@ export default {
         if (!this.article.title.length) {
           input.focus()
         }
-      }, 200)
+      }, 400)
     },
 
     focusOnBlock(type='last') {
@@ -167,12 +162,6 @@ export default {
           article.title = this.article.title
         }
       })
-    },
-
-    updateMovedObject() {
-      this.$axios.put(`${this.server}block/${this.active_id}/`,
-        {order_number: this.new_order_number},
-        {headers: this.auth_headers})
     },
 
 

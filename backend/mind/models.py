@@ -102,6 +102,7 @@ class ContentBlock(models.Model):
         ('title', 'title'),
         ('code', 'code'),
         ('list', 'list'),
+        ('markdown', 'markdown'),
         ('img', 'img')
     )
 
@@ -112,7 +113,7 @@ class ContentBlock(models.Model):
     block_type = models.CharField("Тип блока", choices=BLOCK_TYPES, max_length=20, default='text')
 
 
-    # * if block title settings
+    # * if block title
     TITLE_LEVELS = (
         ('h1', 'h1'),
         ('h2', 'h2'),

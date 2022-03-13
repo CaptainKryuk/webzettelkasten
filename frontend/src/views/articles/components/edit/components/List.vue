@@ -5,35 +5,43 @@
        contenteditable
        class="textarea"
        :id="`input_${id_number}`"
-       @input="handleInput"
-       @keydown.enter.exact="$emit('keydown_enter_exact', $event)"
-       @keydown.enter.shift="$emit('keydown_enter_shift', $event)"
-       @keydown.enter.ctrl="$emit('keydown_enter_ctrl', $event)"
-       @keydown.backspace="$emit('keydown_backspace', $event)"
-       @keydown.up="$emit('keydown_up', $event)"
-       @keydown.down="$emit('keydown_down', $event)"
-       @focus="$emit('focus')"
-       @blur="$emit('blur')"
+       ref="input"
+       @input="handleTextInput"
+       @keydown.enter.exact="handleInput"
+       @keydown.enter.shift="createBlock($event)"
+       @keydown.enter.ctrl="createBlock($event)"
+       @keydown.backspace="handleInput"
+       @keydown.up="handleInput"
+       @keydown.down="handleInput"
+       @focus="$emit('change_input_focus', true)"
+       @blur="$emit('change_input_focus', false)"
        ></div>
 </template>
 
 <script>
 import mixinAutoResize from "@/global/mixins/autoResize.js";
+import inputComponentsMixin from '../mixins/InputComponentsMixin.vue'
 
 export default {
   name: 'ListMixin',
 
-  mixins: [mixinAutoResize],
-  props: ['modelValue', 'id_number'],
-  emits: ['keydown_enter_exact', 
-          'keydown_enter_shift', 
-          'keydown_enter_ctrl',
-          'keydown_backspace', 
-          'keydown_up', 
-          'keydown_down',
-          'focus',
-          'blur',
-          'update:modelValue'],
+  mixins: [
+    mixinAutoResize,
+    inputComponentsMixin,
+  ],
+
+
+  props: {
+    'modelValue': String,
+    'block': Object,
+    'index': Number,
+    'id_number': String | Number,
+  },
+
+  emits: [
+    'update:modelValue',
+    'change_input_focus'
+  ],
 
   watch: {
     modelValue: {
@@ -53,16 +61,12 @@ export default {
   },
 
   methods: {
-    handleInput(e) {
+    handleTextInput(e) {
       this.mixin_autoResize_resize(e)
       this.$emit('update:modelValue', e.target.innerHTML)
-    }
+    } 
   }
 
   
 }
 </script>
-
-<style lang="sass" scoped>
-@import "@/assets/sass/style.sass"
-</style>

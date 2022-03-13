@@ -46,12 +46,20 @@ class ArticleSerializer(serializers.ModelSerializer):
         model = Article
         fields = '__all__'
 
+
     def get_tags(self, instance):
         return [{'name': tag.name, 'color': tag.color} for tag in instance.tags.all()]
 
     def get_blocks(self, instance):
         blocks = ContentBlock.objects.filter(article=instance)
         return ContentBlockSerializer(blocks, many=True).data
+
+
+class ContentBlockUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContentBlock
+        fields = '__all__'
+        read_only_fields = ('order_number', )
 
 
 class ContentBlockSerializer(serializers.ModelSerializer):

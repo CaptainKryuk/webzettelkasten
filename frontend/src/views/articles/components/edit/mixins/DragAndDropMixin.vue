@@ -24,6 +24,7 @@ export default {
           task.draggable = true;
         }
 
+        // * Устанавливаем события на начало переноса и на конец
         tasksListElement.addEventListener(`dragstart`, (evt) => {
           if (evt.target.classList.contains(`${detail_class}`)) {
             this.active_id = evt.target.getAttribute('drag_id')
@@ -60,6 +61,7 @@ export default {
             return;
           }
           
+          // Здесь мы переступаем элемент и получаем тот, который переступили
           const nextElement = getNextElement(evt.clientY, currentElement);
           
           if (
@@ -69,7 +71,7 @@ export default {
           ) {
             return;
           }
-            
+          
           tasksListElement.insertBefore(activeElement, nextElement);
           
           let a_index = activeElement.getAttribute('drag_index')

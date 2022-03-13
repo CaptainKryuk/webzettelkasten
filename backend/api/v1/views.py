@@ -231,27 +231,7 @@ class ContentBlockViewSet(SecurityViewSet):
         block = ContentBlock.objects.filter(id=pk).first()
         if block and block.article.user.id == request.user.id:
 
-            if 'order_number' in request.data and request.data['order_number'] != block.order_number:
-                data_num = request.data['order_number']
-                b_num = block.order_number
-
-                if int(data_num) > int(b_num):
-                    position_holders = ContentBlock.objects.filter(order_number__lte=data_num, order_number__gte=block.order_number)
-                    for a in position_holders:
-                        a.order_number -= 1
-                        a.save()
-                elif int(data_num) < int(b_num):
-                    position_holders = ContentBlock.objects.filter(order_number__gte=data_num, order_number__lte=block.order_number)
-                    for a in position_holders:
-                        a.order_number += 1
-                        a.save()
-
-                block.order_number = data_num
-                block.save()
-                return Response('success')
-
-
-            serializer = serializers.ContentBlockSerializer(block, data=request.data, partial=True)
+            serializer = serializers.ContentBlockUpdateSerializer(block, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -264,6 +244,38 @@ class ContentBlockViewSet(SecurityViewSet):
             block.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response('error', status=status.HTTP_400_BAD_REQUEST)
+
+
+    @action(detail=True, methods=['put'])
+    def update_order_number(self, request, pk):
+
+        block = ContentBlock.objects.filter(id=pk).first()
+        if block and block.article.user.id == request.user.id:
+
+            if 'order_number' in request.data and request.data['order_number'] != block.order_number:
+                data_num = request.data['order_number']
+                block_number = block.order_number
+
+                # * Если новый порядковый номер блока больше, чем был, то мы находим всех, кто меньше нового и больше старого
+                if int(data_num) > int(block_number):
+                    position_holders = ContentBlock.objects.filter(order_number__lte=data_num, order_number__gte=block_number)
+                    for a in position_holders:
+                        a.order_number -= 1
+                        a.save()
+                elif int(data_num) < int(block_number):
+                    position_holders = ContentBlock.objects.filter(order_number__gte=data_num, order_number__lte=block_number)
+                    for a in position_holders:
+                        a.order_number += 1
+                        a.save()
+
+                block.order_number = data_num
+                block.save()
+
+                # передаем номера блоков, чтобы на фронте при обновлении выставить в правильном порядке
+                blocks_numbers = {block.id: block.order_number for block in ContentBlock.objects.filter(article=block.article)}
+                return Response(blocks_numbers)
+        return Response('no access', status=status.HTTP_403_FORBIDDEN)
+
 
 
 class BlockImageViewSet(SecurityViewSet):
