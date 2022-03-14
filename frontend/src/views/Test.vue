@@ -1,8 +1,18 @@
 <template>
+message: {{ message }}
+<div v-html="message" 
+     :value="message" 
+     contenteditable=""
+     ref="input"
+     style="margin: 20px; outline: none"></div>
 
-    <Markdown :source="source" />
 
-    <textarea @input="input" />
+<contenteditable tag="b" 
+                 :contenteditable="isEditable" 
+                 v-model="message" 
+                 :noNL="false" 
+                 :noHTML="true" 
+                 @returned="enterPressed" />
 </template>
 
 <script>
@@ -19,20 +29,50 @@ export default {
 
   data() {
     return {
-      source: '# Hello World!'
+      isEditable: true,
+      message: "<h1>Hello</h1>"
     }
   },
 
   computed: {
     ...mapState(['server'])
   },
+
+  watch: {
+    message: {
+      handler() {
+        let markdown = require('markdown-it')
+        let md = new markdown()
+        let result = md.render(this.message)
+        this.message = result
+        console.log('catch')
+      }
+    }
+  },
   
   mounted() {
-    console.log(this.server)
-    console.log(store)
   },
 
   methods: {
+     enterPressed(){
+       alert('Enter Pressed');
+     },
+
+    controlContent(e) {
+      console.log(e.target.innerText)
+      let markdown = require('markdown-it')
+      let md = new markdown()
+      let result = md.render(e.target.innerText)
+      this.message = result
+      setTimeout(() => {
+        console.log(this.$refs.input)
+        this.$refs.input.focus()
+        this.$refs.input.selectionStart = 99999
+        this.$refs.input.selectionEnd = 0
+      }, 500)
+
+    },
+
     input(e) {
       e.preventDefault()
       e.stopPropagation()

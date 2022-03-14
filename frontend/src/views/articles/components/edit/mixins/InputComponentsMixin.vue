@@ -16,7 +16,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['server', 'auth_headers', 'popup_menu', 'article'])
+    ...mapState(['server', 'auth_headers', 'popup_menu', 'article', 'block_sizes'])
   },
 
   methods: {
@@ -48,6 +48,7 @@ export default {
       let after = text.slice(start)
       this.block.inner_text = before + '  ' + after
       setTimeout(() => {
+        input.style.display = 'inline-block'
         input.focus()
         input.selectionStart = before.length + 2
         input.selectionEnd = before.length + 2
@@ -134,6 +135,7 @@ export default {
           if (this.block.block_type === 'title') {
             e.preventDefault()
             this.createOrFocus()
+
           } else if (this.block.block_type === 'list') {
             // * get last li element, if that blank -> go to next block or create new
             let all_li = e.target.querySelectorAll('li')
@@ -195,7 +197,7 @@ export default {
           } else {
             // * if we have content in this block go to previous
             e.preventDefault()
-            this.focusOnBlock('previous', true)
+            this.focusOnBlock('previous')
           }
         }
       } 
@@ -215,7 +217,7 @@ export default {
 
               if (e.target.selectionStart <= line_length && e.target.selectionStart <= split_line[0].length) {
                 e.preventDefault()
-                this.focusOnBlock('previous', true)
+                this.focusOnBlock('previous')
               }
             } 
             
@@ -318,12 +320,12 @@ export default {
         .then((response) => {
           this.ADD_NEW_BLOCK({data: response.data, index: this.index})
           setTimeout(() => {
-            this.focusOnBlock('next')
+            this.focusOnBlock('next', true)
           })
         })
     },
 
-    focusOnBlock(type='previous', to_start=false) {
+    focusOnBlock(type='previous', is_new=false) {
       let textarea = this.$refs.input
       let parent;
       if (type === 'previous') {
@@ -351,6 +353,11 @@ export default {
           // * Нужно изменить стиль, если тип поля markdown
           found_input.style.display = 'inline-block'
 
+          if (is_new) {
+            // * так как блок создается текстовый, можно поставить стандартный размер текстового блока
+            found_input.style.height = '36px'
+            console.log('catch')
+          }
           found_input.focus()
 
           if (type === 'previous') {
@@ -382,7 +389,7 @@ export default {
           })
       } else {
         this.block.inner_text = ''
-        if (this.block.block_type === 'list' || this.block.block_type === 'img' || this.block.block_type === 'title') {
+        if (this.block.block_type !== 'text') {
           this.changeBlock(e, 'text')
         }
         try {
@@ -412,24 +419,20 @@ export default {
         
       }
       
+      // * в момент, когда мы тут переключаем тип, меняется компонент, отвечающий за каждый тип поля
       this.block.block_type = new_type
 
       let text_types = ['title', 'text', 'code', 'markdown']
 
       if (text_types.includes(new_type)) {
-        if (new_type === 'code') {
-          this.setupNewBlock(e, '42px')
-        } else {
-          this.setupNewBlock(e)
-        }
-
+        this.setupNewBlock(e, new_type)
       }
       
       else if (new_type === 'list') {
         this.block.inner_text = '<ul style="margin-top: 0; margin-bottom: 0"><li></li></ul>'
         setTimeout(() => {
           // * setTimeout need to be in time, whem ListMixin have been updated
-          this.focusOnNewInput('42px')
+          this.focusOnNewInput('list')
         }, 400)
 
       } 
@@ -446,21 +449,22 @@ export default {
 
     },
 
-    setupNewBlock(e, height=undefined) {
+    setupNewBlock(e, type=undefined) {
       this.block.inner_text = ''
-      this.focusOnNewInput(height)
+      this.focusOnNewInput(type)
     },
 
-    focusOnNewInput(height=undefined) {
+    focusOnNewInput(type=undefined) {
       // * Когда меняется тип блока - меняется элемент - нужно получить новый
       // * также можно передать высоту элемента для установки
+
       setTimeout(() => {
         let newinput = document.querySelector(`#input_${this.random_number}`)
-        
+
         // * нужно для блока markdown, потому что там стоит v-show и мы должны сначала его показать, а потом focus поставить
         newinput.style.display = 'inline-block'
-        if (height) {
-          newinput.style.height = height
+        if (this.block_sizes[type]) {
+          newinput.style.height = this.block_sizes[type]
         }
         newinput.focus()
       })

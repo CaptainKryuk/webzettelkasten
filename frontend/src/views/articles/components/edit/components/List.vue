@@ -4,7 +4,7 @@
        v-once
        contenteditable
        class="textarea"
-       :id="`input_${id_number}`"
+       :id="`input_${random_number}`"
        ref="input"
        @input="handleTextInput"
        @keydown.enter.exact="handleInput"
@@ -35,7 +35,7 @@ export default {
     'modelValue': String,
     'block': Object,
     'index': Number,
-    'id_number': String | Number,
+    'random_number': String | Number,
   },
 
   emits: [
@@ -46,14 +46,14 @@ export default {
   watch: {
     modelValue: {
       handler(newValue) {
-        if (document.activeElement === document.querySelector(`#input_${this.id_number}`)) {
+        if (document.activeElement === document.querySelector(`#input_${this.random_number}`)) {
           return;
         }
-        document.querySelector(`#input_${this.id_number}`).innerHTML = newValue
+        document.querySelector(`#input_${this.random_number}`).innerHTML = newValue
       }
     },
 
-    id_number: {
+    random_number: {
       handler(newValue) {
         document.querySelector(`#input_0`).id = `input_${newValue}`
       }

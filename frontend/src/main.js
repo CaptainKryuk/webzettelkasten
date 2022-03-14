@@ -4,6 +4,9 @@ import store from './store'
 import router from './router'
 import axios from 'axios'
 
+import contenteditable from 'vue-contenteditable'
+
+
 // axios initialization
 import service from './axios'
 
@@ -18,6 +21,10 @@ components.forEach(component => {
 })
 
 app.config.globalProperties.$axios = axios
+
+// app.use(contenteditable)
+
+app.component(contenteditable.name, contenteditable)
 
 // directives
 app.directive('click-outside', {

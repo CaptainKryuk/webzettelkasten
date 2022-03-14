@@ -15,8 +15,14 @@ export default {
         range.setStart(li[li.length-1], 1)
         range.collapse(true)
       } else {
-        range.setStart(li[0], 1)
-        range.collapse(true)
+        if (li[0].innerText.length === 0) {
+          // * установка на ноль нужна, когда li в списке единственный и пустой
+          range.setStart(li[0], 0)
+          range.collapse(true)
+        } else {
+          range.setStart(li[0], 1)
+          range.collapse(true)
+        }
       }
 
       sel.removeAllRanges()

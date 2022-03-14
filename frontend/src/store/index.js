@@ -33,6 +33,14 @@ export default createStore({
         {icon: 'list', tag: '/list', name: 'Список', active: false, type: 'list'},
         {icon: 'markdown', tag: '/markdown', name: "Markdown", active: false, type: 'markdown'}
       ],
+
+      block_sizes: {
+        'title': '43px',
+        'text': '36px',
+        'code': '42px',
+        'markdown': '34px',
+        'list': '32px'
+      }
     }
   },
   

@@ -21,6 +21,8 @@
 @include font('Lato', normal, 700, './assets/fonts/Lato/Lato-Bold.ttf');
 @include font('Lato', normal, 900, './assets/fonts/Lato/Lato-Heavy.ttf');
 
+@include font('Anonymous', normal, 500, './assets/fonts/Monospace/Anonymous.ttf');
+
 #app {
   font-family: 'Lato', sans-serif;
   -webkit-font-smoothing: antialiased;

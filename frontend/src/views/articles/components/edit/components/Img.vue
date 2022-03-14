@@ -1,9 +1,10 @@
 <template>
-  <div :id="`input_${id_number}`"
+  <div :id="`input_${random_number}`"
        class="textarea img_textarea"
        ref="input">
 
-    <label v-if="block.images && !block.images.length" class="file_label">
+    <label v-if="block.images && !block.images.length" 
+           :class="['file_label', is_focussed ? 'focussed_label' : '']">
       Выберите картинку для загрузки
       <input type="file" id="file" ref="file" @change="uploadFile">
     </label>
@@ -39,7 +40,7 @@ export default {
   mixins: [inputComponentsMixin],
 
   props: {
-    'id_number': String | Number, 
+    'random_number': String | Number, 
     'block': Object,
     'index': Number,
 
@@ -102,7 +103,7 @@ export default {
     },
     
     selectImage(e) {
-      document.querySelector(`#input_${this.id_number}`).querySelector('textarea').focus()
+      document.querySelector(`#input_${this.random_number}`).querySelector('textarea').focus()
       this.is_focussed = true
     }
 

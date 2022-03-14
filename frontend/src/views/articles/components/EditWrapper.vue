@@ -144,6 +144,7 @@ export default {
           } else {
             textarea.selectionStart =  0
             textarea.selectionEnd = 0
+            textarea.style.display = 'inline-block'
             textarea.focus()
           }
         }

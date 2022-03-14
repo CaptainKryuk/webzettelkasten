@@ -36,7 +36,6 @@ export default {
   },
 
   mounted() {
-    console.log('new mounted')
     setTimeout(() => {
       this.setupDragAndDrop('article_blocks', 'detail_block')
     }, 400)

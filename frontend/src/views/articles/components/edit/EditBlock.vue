@@ -40,13 +40,13 @@
 
       <list-com v-else-if="block.block_type === 'list'"
                   v-model="block.inner_text" 
-                  :id_number="random_number"
+                  :random_number="random_number"
                   :block="block"
                   :index="index"
                   @change_input_focus='is_input_focus = $event'></list-com>
 
       <img-com v-else-if="block.block_type === 'img'"
-               :id_number="random_number"
+               :random_number="random_number"
                :block="block"
                :index="index"
                @update="block.images = $event"></img-com>
@@ -145,7 +145,7 @@ export default {
   },
 
   computed: {
-    ...mapState(['server', 'auth_headers', 'article', 'popup_menu']),
+    ...mapState(['server', 'auth_headers', 'article', 'popup_menu', 'block_sizes']),
 
     is_open_menu() {
       let match_text = this.block.inner_text.match(/^\/$/)
@@ -208,13 +208,7 @@ export default {
             // * if text area have text
             textarea.style.height = textarea.scrollHeight + 'px'
           } else {
-            if (this.block.block_type === 'text') {
-              textarea.style.height = '32px'
-            } else if (this.block.block_type === 'title') {
-              textarea.style.height = '39px'
-            } else if (this.block.block_type === 'code') {
-              textarea.style.height = '42px'
-            }
+            textarea.style.height = this.block_sizes[this.block.block_type] 
           }
         }
 
