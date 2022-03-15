@@ -21,6 +21,7 @@
 <script>
 import mixinAutoResize from "@/global/mixins/autoResize.js";
 import inputComponentsMixin from '../mixins/InputComponentsMixin.vue'
+import { mapState } from 'vuex';
 
 export default {
   name: 'ListMixin',
@@ -42,6 +43,10 @@ export default {
     'update:modelValue',
     'change_input_focus'
   ],
+
+  computed: {
+    ...mapState(['block_sizes'])
+  },
 
   watch: {
     modelValue: {

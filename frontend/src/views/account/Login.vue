@@ -62,7 +62,6 @@ export default {
           this.$router.push('/mind')
         })
         .catch((error) => {
-          console.log('error', error)
           this.error = error.response.data
         })
     }

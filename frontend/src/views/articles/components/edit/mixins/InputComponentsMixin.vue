@@ -356,7 +356,6 @@ export default {
           if (is_new) {
             // * так как блок создается текстовый, можно поставить стандартный размер текстового блока
             found_input.style.height = '36px'
-            console.log('catch')
           }
           found_input.focus()
 

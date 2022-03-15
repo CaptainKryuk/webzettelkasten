@@ -9,7 +9,7 @@ message: {{ message }}
 
 <contenteditable tag="b" 
                  :contenteditable="isEditable" 
-                 v-model="message" 
+                 v-model="re" 
                  :noNL="false" 
                  :noHTML="true" 
                  @returned="enterPressed" />
@@ -30,7 +30,8 @@ export default {
   data() {
     return {
       isEditable: true,
-      message: "<h1>Hello</h1>"
+      message: "<h1>Hello</h1>",
+      result: ''
     }
   },
 
@@ -45,7 +46,6 @@ export default {
         let md = new markdown()
         let result = md.render(this.message)
         this.message = result
-        console.log('catch')
       }
     }
   },
@@ -59,13 +59,11 @@ export default {
      },
 
     controlContent(e) {
-      console.log(e.target.innerText)
       let markdown = require('markdown-it')
       let md = new markdown()
       let result = md.render(e.target.innerText)
       this.message = result
       setTimeout(() => {
-        console.log(this.$refs.input)
         this.$refs.input.focus()
         this.$refs.input.selectionStart = 99999
         this.$refs.input.selectionEnd = 0
