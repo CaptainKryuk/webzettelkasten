@@ -24,7 +24,13 @@ export default {
 
     textInput(e) {
       this.mixin_autoResize_resize(e)
+      console.log(e.target.value, e.target.innerText)
       this.$emit('update:modelValue', e.target.value)
+    },
+
+    handleTextInput(e) {
+      this.mixin_autoResize_resize(e)
+      this.$emit('update:modelValue', e.target.innerHTML)
     },
 
     addTabSpace(e) {

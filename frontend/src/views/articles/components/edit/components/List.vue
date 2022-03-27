@@ -1,8 +1,8 @@
 <template>
-  <div v-html="modelValue" 
-       :value="modelValue"
+  <div v-html="test_value" 
+       :value="test_value"
        v-once
-       contenteditable
+       contentEditable="false"
        class="textarea"
        :id="`input_${random_number}`"
        ref="input"
@@ -14,8 +14,7 @@
        @keydown.up="handleInput"
        @keydown.down="handleInput"
        @focus="$emit('change_input_focus', true)"
-       @blur="$emit('change_input_focus', false)"
-       ></div>
+       @blur="$emit('change_input_focus', false)"></div>
 </template>
 
 <script>
@@ -44,6 +43,12 @@ export default {
     'change_input_focus'
   ],
 
+  data() {
+    return {
+      test_value: 'Hello <a href="/">link</a>'
+    }
+  },
+
   computed: {
     ...mapState(['block_sizes'])
   },
@@ -66,10 +71,7 @@ export default {
   },
 
   methods: {
-    handleTextInput(e) {
-      this.mixin_autoResize_resize(e)
-      this.$emit('update:modelValue', e.target.innerHTML)
-    } 
+
   }
 
   

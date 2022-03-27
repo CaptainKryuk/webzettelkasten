@@ -1,3 +1,4 @@
+from statistics import mode
 from django.db import models
 from base.models import AbstractDateTimeModel
 from pytils.translit import slugify
@@ -27,6 +28,8 @@ class Article(AbstractDateTimeModel):
     order_number = models.IntegerField("Место по порядку", blank=True)
 
     user = models.ForeignKey('users.User', verbose_name="Пользователь, написавший статью", on_delete=models.CASCADE)
+
+    source = models.TextField(blank=True)
 
     class Meta:
         verbose_name = "Статья"

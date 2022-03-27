@@ -3,10 +3,9 @@ import App from './App.vue';
 import store from './store'
 import router from './router'
 import axios from 'axios'
+import CKEditor from '@ckeditor/ckeditor5-vue'
 
 import contenteditable from 'vue-contenteditable'
-
-
 // axios initialization
 import service from './axios'
 
@@ -14,6 +13,8 @@ const app = createApp(App).use(store).use(router)
 
 // register global all utils in utils folder
 import inputs from './global/index'
+
+app.use(CKEditor)
 
 let components = [...inputs]
 components.forEach(component => {

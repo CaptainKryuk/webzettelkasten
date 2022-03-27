@@ -56,8 +56,7 @@
                     :block='block'
                     :index='index'
                     :random_number="random_number"
-                    @change_input_focus='is_input_focus = $event'
-                    :is_open_menu="is_open_menu"></markdown-com>
+                    @change_input_focus='is_input_focus = $event'></markdown-com>
     </label>
 
     <div class="detail_block__icon">

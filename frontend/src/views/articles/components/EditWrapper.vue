@@ -26,9 +26,9 @@
 
     </div>
 
-    <article-blocks :key="component_key" @render="forceRendered"></article-blocks>
+    <article-blocks :key="component_key" @render="forceRendered" @update='article.source = $event'></article-blocks>
     <!-- this label fit bottom of page and when click on this area last input in article blocks makes focussed  -->
-    <label class="focus_label" @click="focusOnBlock()"> </label>
+    <!-- <label class="focus_label" @click="focusOnBlock()"> </label> -->
 
 
   </div>
@@ -69,6 +69,12 @@ export default {
       handler() {
         this.debouncedUpdateArticle()
         this.debouncedUpdateArticleInList()
+      }
+    },
+
+    'article.source': {
+      handler() {
+        this.debouncedUpdateArticle()
       }
     },
 
