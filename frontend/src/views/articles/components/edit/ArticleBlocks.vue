@@ -2,8 +2,7 @@
   <div class="article_blocks">
     <ckeditor :editor="editor" 
               v-model="article.source" 
-              :config="editorConfig"
-              @ready="onReady"></ckeditor>
+              :config="editorConfig"></ckeditor>
   </div>
 </template>
 
